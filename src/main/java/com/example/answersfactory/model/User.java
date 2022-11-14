@@ -1,15 +1,16 @@
 package com.example.answersfactory.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 
@@ -32,6 +33,39 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
+
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Question> questions;
+
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Answer> answers;
+
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Suggestion> suggestions;
+
+    @OneToMany(mappedBy = "sendUser", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Request> banningRaisedRequests;
+
+    @OneToMany(mappedBy = "receiveUser", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Request> banningReceivedRequests;
+
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "users_badges",
+            joinColumns = {
+                    @JoinColumn(name = "user_id", referencedColumnName = "id",
+                            nullable = false, updatable = false)},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "badge_id", referencedColumnName = "id",
+                            nullable = false, updatable = false)})
+    private Set<Badge> badges = new HashSet<>();
+
+
 
     @Override
     public String getPassword() {
@@ -62,4 +96,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
