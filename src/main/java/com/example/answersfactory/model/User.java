@@ -65,8 +65,6 @@ public class User implements UserDetails {
                             nullable = false, updatable = false)})
     private Set<Badge> badges = new HashSet<>();
 
-
-
     @Override
     public String getPassword() {
         return password;
