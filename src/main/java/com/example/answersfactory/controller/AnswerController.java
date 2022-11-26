@@ -56,4 +56,14 @@ public class AnswerController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PatchMapping("/vote-response/{responseId}/{option}")
+    public ResponseEntity<AnswerDto> voteResponse(@PathVariable("responseId") Long id,
+                                                  @PathVariable("option") int option){
+        AnswerDto result = answerService.voteResponse(id, option);
+        if(result == null){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

@@ -10,9 +10,11 @@ import java.util.List;
 @Entity
 @Data
 public class Topic {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
 
     public Topic() {

@@ -2,8 +2,6 @@ package com.example.answersfactory.util;
 
 import io.jsonwebtoken.Jwts;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -18,9 +16,6 @@ import java.util.Date;
 
 @Component
 public class JwtUtils {
-
-    @Value("${application.jwt.secretKey}")
-    private String jwtSecret;
 
     @Value("${application.jwt.tokenAvailability}")
     private int jwtAvailability;

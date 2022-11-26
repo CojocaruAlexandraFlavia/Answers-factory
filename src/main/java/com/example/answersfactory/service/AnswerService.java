@@ -66,4 +66,19 @@ public class AnswerService {
         }
         return false;
     }
+
+    public AnswerDto voteResponse(Long responseId, int option){
+        Optional<Answer> optionalAnswer = findAnswerById(responseId);
+        if(optionalAnswer.isPresent() && (option == 0 || option == 1)){
+            Answer answer = optionalAnswer.get();
+            if(option == 0){
+                answer.setDislikes(answer.getDislikes() + 1);
+            } else {
+                answer.setLikes(answer.getLikes() + 1);
+            }
+            answer = answerRepository.save(answer);
+            return convertEntityToDto(answer);
+        }
+        return null;
+    }
 }
