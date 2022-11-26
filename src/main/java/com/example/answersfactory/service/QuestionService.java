@@ -33,24 +33,35 @@ public class QuestionService {
 
     public QuestionDto saveQuestion(@NotNull QuestionDto questionDto){
         Question question = new Question();
-       // Optional<User> optionalUser = userService.findUserById(questionDto.getUserId());
-       // if(optionalUser.isPresent()){
+        Optional<User> optionalUser = userService.findUserById(questionDto.getUserId());
+         if(optionalUser.isPresent()){
             question.setMessage(questionDto.getMessage());
             question.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             question.setStatus("");
-            //question.setUser(optionalUser.get());
+            question.setUser(optionalUser.get());
+            question.setNotifications(questionDto.getNotifications());
+            question.setAnswers(questionDto.getAnswers());
+            question.setSuggestions(questionDto.getSuggestions());
+            questionDto.setTopic(questionDto.getTopic());
             question = questionRepository.save(question);
             return convertEntityToDto(question);
-       // }
-       // return null;
+       }
+        return null;
     }
 
     public QuestionDto updateQuestion(Long questionId, QuestionDto questionDto){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
-        if(optionalQuestion.isPresent()){
+        Optional<User> optionalUser = userService.findUserById(questionDto.getUserId());
+        if(optionalQuestion.isPresent() && optionalUser.isPresent()){
             Question question = optionalQuestion.get();
             question.setMessage(questionDto.getMessage());
             question.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+            question.setStatus(questionDto.getStatus());
+            question.setUser(optionalUser.get());
+            question.setNotifications(questionDto.getNotifications());
+            question.setAnswers(questionDto.getAnswers());
+            question.setSuggestions(questionDto.getSuggestions());
+            questionDto.setTopic(questionDto.getTopic());
             return convertEntityToDto(questionRepository.save(question));
         }
         return null;
