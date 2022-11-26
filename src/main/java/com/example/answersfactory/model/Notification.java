@@ -13,8 +13,7 @@ public class Notification {
     private Long id;
     private String notificationType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne
     private Question question;
 
 }

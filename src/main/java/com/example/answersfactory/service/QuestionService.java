@@ -1,10 +1,12 @@
 package com.example.answersfactory.service;
 import com.example.answersfactory.model.Answer;
 import com.example.answersfactory.model.Question;
+import com.example.answersfactory.model.Topic;
 import com.example.answersfactory.model.User;
 import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.QuestionDto;
 import com.example.answersfactory.repository.QuestionRepository;
+import com.example.answersfactory.repository.TopicRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +20,17 @@ import static com.example.answersfactory.model.dto.QuestionDto.convertEntityToDt
 @Service
 public class QuestionService {
 
+
     private final QuestionRepository questionRepository;
     private final UserService userService;
+    private final TopicRepository topicRepository;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository, UserService userService) {
+    public QuestionService(QuestionRepository questionRepository, UserService userService, TopicRepository topicRepository) {
         this.questionRepository = questionRepository;
         this.userService = userService;
+        this.topicRepository = topicRepository;
+
     }
 
     public Optional<Question> findQuestionById(Long id) {
@@ -34,17 +40,28 @@ public class QuestionService {
     public QuestionDto saveQuestion(@NotNull QuestionDto questionDto){
         Question question = new Question();
         Optional<User> optionalUser = userService.findUserById(questionDto.getUserId());
+        Optional<Topic> optionalTopic = topicRepository.checkIfTopicExists(questionDto.getTopic());
+
          if(optionalUser.isPresent()){
             question.setMessage(questionDto.getMessage());
             question.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-            question.setStatus("");
+            question.setStatus(questionDto.getStatus());
             question.setUser(optionalUser.get());
-            question.setNotifications(questionDto.getNotifications());
-            question.setAnswers(questionDto.getAnswers());
-            question.setSuggestions(questionDto.getSuggestions());
-            questionDto.setTopic(questionDto.getTopic());
-            question = questionRepository.save(question);
-            return convertEntityToDto(question);
+             if(optionalTopic.isPresent()){
+                 question.setTopic(optionalTopic.get());
+                 question = questionRepository.save(question);
+                 return convertEntityToDto(question);
+             }
+             else{
+                 Topic t = new Topic();
+                 t.setName(questionDto.getTopic());
+                 topicRepository.save(t);
+                 question.setTopic(t);
+                 question = questionRepository.save(question);
+                 return convertEntityToDto(question);
+             }
+
+
        }
         return null;
     }
@@ -58,9 +75,6 @@ public class QuestionService {
             question.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             question.setStatus(questionDto.getStatus());
             question.setUser(optionalUser.get());
-            question.setNotifications(questionDto.getNotifications());
-            question.setAnswers(questionDto.getAnswers());
-            question.setSuggestions(questionDto.getSuggestions());
             questionDto.setTopic(questionDto.getTopic());
             return convertEntityToDto(questionRepository.save(question));
         }

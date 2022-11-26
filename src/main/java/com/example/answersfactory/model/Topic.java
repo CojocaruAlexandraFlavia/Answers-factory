@@ -18,7 +18,7 @@ public class Topic {
     public Topic() {
     }
 
-    @OneToMany(mappedBy = "topic", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "topic", cascade= CascadeType.ALL)
     @JsonIgnore
     private List<Question> questions;
 

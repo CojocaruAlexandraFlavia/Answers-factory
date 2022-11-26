@@ -19,11 +19,11 @@ public class Answer {
     private boolean acceptedStatus;
     private String date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnore
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnore
     private User user;
 

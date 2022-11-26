@@ -15,7 +15,7 @@ public class Badge {
     private Long id;
     private String name;
 
-    @ManyToMany(mappedBy = "badges", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "badges", cascade= CascadeType.ALL)
     private Set<User> users;
 
 }

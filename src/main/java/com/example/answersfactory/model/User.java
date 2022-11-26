@@ -2,6 +2,8 @@ package com.example.answersfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,28 +36,33 @@ public class User implements UserDetails {
         return singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Question> questions;
 
-    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Answer> answers;
 
-    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.EAGER )
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     private List<Suggestion> suggestions;
 
-    @OneToMany(mappedBy = "sendUser", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "sendUser", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     private List<Request> banningRaisedRequests;
 
-    @OneToMany(mappedBy = "receiveUser", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "receiveUser", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
     private List<Request> banningReceivedRequests;
 
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "users_badges",
             joinColumns = {
                     @JoinColumn(name = "user_id", referencedColumnName = "id",

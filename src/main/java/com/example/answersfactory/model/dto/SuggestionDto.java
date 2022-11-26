@@ -11,6 +11,7 @@ public class SuggestionDto {
     private Long questionId;
     private Long userId;
 
+
     public static @NotNull SuggestionDto convertEntityToDto(@NotNull Suggestion suggestion){
         SuggestionDto suggestionDto = new SuggestionDto();
         suggestionDto.setMessage(suggestion.getMessage());

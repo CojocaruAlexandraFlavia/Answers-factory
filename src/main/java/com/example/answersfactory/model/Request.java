@@ -15,12 +15,12 @@ public class Request {
     private String type;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnore
     private User sendUser;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnore
     private User receiveUser;
 }
