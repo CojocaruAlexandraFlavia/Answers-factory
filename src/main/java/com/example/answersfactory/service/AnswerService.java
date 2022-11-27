@@ -4,6 +4,7 @@ import com.example.answersfactory.model.Answer;
 import com.example.answersfactory.model.Question;
 import com.example.answersfactory.model.User;
 import com.example.answersfactory.model.dto.AnswerDto;
+import com.example.answersfactory.model.dto.VoteResponseRequest;
 import com.example.answersfactory.repository.AnswerRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,17 +68,28 @@ public class AnswerService {
         return false;
     }
 
-    public AnswerDto voteResponse(Long responseId, int option){
-        Optional<Answer> optionalAnswer = findAnswerById(responseId);
-        if(optionalAnswer.isPresent() && (option == 0 || option == 1)){
+    public AnswerDto voteResponse(@NotNull VoteResponseRequest request){
+        Optional<Answer> optionalAnswer = findAnswerById(request.getResponseId());
+        Optional<User> optionalUser = userService.findUserById(request.getUserId());
+        if(optionalAnswer.isPresent() && optionalUser.isPresent() &&
+                (request.getOption() == 0 || request.getOption() == 1)){
             Answer answer = optionalAnswer.get();
-            if(option == 0){
-                answer.setDislikes(answer.getDislikes() + 1);
+            User user = optionalUser.get();
+            Optional<Answer> votedAnswer = user.getVotedAnswers().stream().filter(a ->
+                    a.getId().equals(request.getResponseId())).findFirst();
+            if(votedAnswer.isEmpty()){
+                if(request.getOption() == 0){
+                    answer.setDislikes(answer.getDislikes() + 1);
+                } else {
+                    answer.setLikes(answer.getLikes() + 1);
+                }
+                user.addVotedAnswer(answer);
+                userService.insertUser(user);
+                answer = answerRepository.save(answer);
+                return convertEntityToDto(answer);
             } else {
-                answer.setLikes(answer.getLikes() + 1);
+                return null;
             }
-            answer = answerRepository.save(answer);
-            return convertEntityToDto(answer);
         }
         return null;
     }

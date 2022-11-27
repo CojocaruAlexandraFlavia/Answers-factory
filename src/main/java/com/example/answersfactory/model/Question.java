@@ -1,12 +1,16 @@
 package com.example.answersfactory.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Question {
 
     @Id
@@ -17,28 +21,19 @@ public class Question {
     private String status;
     private String createDate;
 
-    public Question() {
-    }
-
-
     @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Suggestion> suggestions;
 
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL)
     private List<Answer> answers;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne
     private Topic topic;
 
 }

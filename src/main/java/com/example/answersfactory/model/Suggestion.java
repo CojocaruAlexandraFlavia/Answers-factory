@@ -2,11 +2,14 @@ package com.example.answersfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Suggestion {
 
     @Id
@@ -16,10 +19,8 @@ public class Suggestion {
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private User user;
 }

@@ -2,6 +2,7 @@ package com.example.answersfactory.controller;
 
 import com.example.answersfactory.model.Answer;
 import com.example.answersfactory.model.dto.AnswerDto;
+import com.example.answersfactory.model.dto.VoteResponseRequest;
 import com.example.answersfactory.service.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,10 +57,9 @@ public class AnswerController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PatchMapping("/vote-response/{responseId}/{option}")
-    public ResponseEntity<AnswerDto> voteResponse(@PathVariable("responseId") Long id,
-                                                  @PathVariable("option") int option){
-        AnswerDto result = answerService.voteResponse(id, option);
+    @PutMapping("/vote-response")
+    public ResponseEntity<AnswerDto> voteResponse(@RequestBody VoteResponseRequest request){
+        AnswerDto result = answerService.voteResponse(request);
         if(result == null){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
