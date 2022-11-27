@@ -2,6 +2,8 @@ package com.example.answersfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -9,7 +11,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Question {
 
     @Id
@@ -24,19 +27,19 @@ public class Question {
     }
 
 
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Notification> notifications;
-
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
-    @Fetch(value = FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "question", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE })
     private List<Suggestion> suggestions;
+//
+//    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
+//    @JsonIgnore
+//    @Fetch(value = FetchMode.SUBSELECT)
+//    private List<Suggestion> suggestions;
 
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
-    @Fetch(value = FetchMode.SUBSELECT)
-    private List<Answer> answers;
+//    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.EAGER)
+//    @JsonIgnore
+//    @Fetch(value = FetchMode.SUBSELECT)
+//
+//    private List<Answer> answers;
 
     @ManyToOne
     @JsonIgnore
@@ -45,5 +48,7 @@ public class Question {
     @ManyToOne
     @JsonIgnore
     private Topic topic;
+
+
 
 }

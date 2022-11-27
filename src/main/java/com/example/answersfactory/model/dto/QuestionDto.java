@@ -28,13 +28,15 @@ public class QuestionDto {
         dto.setCreateDate(question.getCreateDate());
         dto.setUserId(question.getUser().getId());
         dto.setTopic(question.getTopic().getName());
-        if(question.getNotifications() != null){
-            dto.setNotifications(question.getNotifications().stream().map(notification -> new NotificationDto(notification.getNotificationType(),
-                    notification.getQuestion().getId())).collect(Collectors.toList()));
-        }
-        if(question.getAnswers() !=null){
-            dto.setAnswers(question.getAnswers().stream().map(AnswerDto::convertEntityToDto).collect(toList()));
-        }
+//
+//        if(question.getNotifications() != null){
+//            dto.setNotifications(question.getNotifications().stream().map(notification -> new NotificationDto(notification.getNotificationType(),
+//                    notification.getQuestion().getId())).collect(Collectors.toList()));
+//        }
+//        if(question.getAnswers() !=null){
+//            dto.setAnswers(question.getAnswers().stream().map(AnswerDto::convertEntityToDto).collect(toList()));
+//        }
+
         if(question.getSuggestions() != null){
             dto.setSuggestions(question.getSuggestions().stream().map(SuggestionDto::convertEntityToDto).collect(toList()));
         }

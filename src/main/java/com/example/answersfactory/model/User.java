@@ -2,6 +2,8 @@ package com.example.answersfactory.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +19,8 @@ import java.util.Set;
 import static java.util.Collections.singletonList;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class User implements UserDetails {
 
     @Id

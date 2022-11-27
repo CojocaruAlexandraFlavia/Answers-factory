@@ -6,6 +6,7 @@ import com.example.answersfactory.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import static com.example.answersfactory.model.dto.QuestionDto.convertEntityToDto;
 
 @RestController
+@Transactional
 @RequestMapping("/question")
 public class QuestionController {
     private final QuestionService questionService;
