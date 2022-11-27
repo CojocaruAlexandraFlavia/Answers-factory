@@ -18,7 +18,12 @@ public class Notification {
 
     private String notificationType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Question question;
+
+    @PreRemove
+    public void preRemove(){
+        this.setQuestion(null);
+    }
 
 }

@@ -9,6 +9,7 @@ import com.example.answersfactory.repository.AnswerRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,9 +61,11 @@ public class AnswerService {
         return null;
     }
 
+    @Transactional
     public boolean deleteAnswer(Long answerId){
-        if(answerId != null){
-            answerRepository.deleteById(answerId);
+        Optional<Answer> optionalAnswer = findAnswerById(answerId);
+        if(optionalAnswer.isPresent()){
+            answerRepository.delete(optionalAnswer.get());
             return true;
         }
         return false;

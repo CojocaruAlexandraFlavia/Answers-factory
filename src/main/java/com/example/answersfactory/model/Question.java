@@ -21,16 +21,23 @@ public class Question {
     private String status;
     private String createDate;
 
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Notification> notifications;
 
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Suggestion> suggestions;
 
-    @OneToMany(mappedBy = "question", cascade= CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @PreRemove
+    public void preRemove() {
+        this.answers.forEach(answer -> answer.setQuestion(null));
+        this.suggestions.forEach(suggestion -> suggestion.setQuestion(null));
+        this.notifications.forEach(notification -> notification.setQuestion(null));
+    }
+
+    @ManyToOne
     private User user;
 
     @ManyToOne

@@ -27,4 +27,9 @@ public class Answer {
     @ManyToOne
     private User user;
 
+    @PreRemove
+    public void preRemove(){
+        this.setQuestion(null);
+    }
+
 }

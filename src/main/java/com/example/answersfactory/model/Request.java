@@ -19,9 +19,9 @@ public class Request {
     private String status;
     private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User sendUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User receiveUser;
 }

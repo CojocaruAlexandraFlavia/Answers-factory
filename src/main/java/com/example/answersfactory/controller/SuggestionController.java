@@ -5,10 +5,7 @@ import com.example.answersfactory.service.SuggestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/suggestion")
@@ -28,5 +25,14 @@ public class SuggestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-by-id/{suggestionId}")
+    public ResponseEntity<?> deleteSuggestionById(@PathVariable("suggestionId") Long id){
+        boolean result = suggestionService.deleteSuggestion(id);
+        if(result){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -18,9 +18,9 @@ public class Suggestion {
 
     private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User user;
 }

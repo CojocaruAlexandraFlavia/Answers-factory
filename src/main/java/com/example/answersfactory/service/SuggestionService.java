@@ -43,4 +43,19 @@ public class SuggestionService {
         }
         return null;
     }
+
+    public Optional<Suggestion> findSuggestionById(Long id){
+        return suggestionRepository.findById(id);
+    }
+
+    public boolean deleteSuggestion(Long suggestionId){
+        Optional<Suggestion> optionalSuggestion = findSuggestionById(suggestionId);
+        if(optionalSuggestion.isPresent()){
+            Suggestion suggestion = optionalSuggestion.get();
+            suggestion.setQuestion(null);
+            suggestionRepository.delete(suggestion);
+            return true;
+        }
+        return false;
+    }
 }

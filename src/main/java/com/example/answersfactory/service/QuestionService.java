@@ -1,6 +1,6 @@
 package com.example.answersfactory.service;
+import com.example.answersfactory.model.Answer;
 import com.example.answersfactory.model.Question;
-import com.example.answersfactory.model.Suggestion;
 import com.example.answersfactory.model.Topic;
 import com.example.answersfactory.model.User;
 import com.example.answersfactory.model.dto.QuestionDto;
@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.example.answersfactory.model.dto.QuestionDto.convertEntityToDto;
 
@@ -29,16 +29,19 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserService userService;
     private final TopicRepository topicRepository;
-    private final AnswerRepository answerRepository;
     private final SuggestionRepository suggestionRepository;
 
+    private final AnswerRepository answerRepository;
+
     @Autowired
-    public QuestionService(QuestionRepository questionRepository, UserService userService, TopicRepository topicRepository, AnswerRepository answerRepository, SuggestionRepository suggestionRepository) {
+    public QuestionService(QuestionRepository questionRepository, UserService userService,
+                           TopicRepository topicRepository,
+                           SuggestionRepository suggestionRepository, AnswerRepository answerRepository) {
         this.questionRepository = questionRepository;
         this.userService = userService;
         this.topicRepository = topicRepository;
-        this.answerRepository = answerRepository;
         this.suggestionRepository = suggestionRepository;
+        this.answerRepository = answerRepository;
     }
 
     @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
@@ -87,14 +90,11 @@ public class QuestionService {
 
     public boolean deleteQuestion(Long questionId){
         if(questionId != null){
-            Optional<Question> question = findQuestionById(questionId);
-            if(question.isPresent()){
-                Question q = question.get();
-                suggestionRepository.deleteAllById(q.getSuggestions().stream().map(Suggestion::getId).collect(Collectors.toList()));
-                questionRepository.deleteById(questionId);
+            Optional<Question> optionalQuestion = findQuestionById(questionId);
+            if(optionalQuestion.isPresent()){
+                questionRepository.delete(optionalQuestion.get());
                 return true;
             }
-
         }
         return false;
     }

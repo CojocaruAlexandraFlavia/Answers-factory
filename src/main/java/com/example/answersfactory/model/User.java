@@ -35,13 +35,13 @@ public class User implements UserDetails {
     private int correctAnswers;
     private String description;
 
-    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL)
     private List<Question> questions;
 
-    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL)
     private List<Answer> answers;
 
-    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade= CascadeType.ALL)
     private List<Suggestion> suggestions;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
