@@ -7,5 +7,4 @@ public class AddAnswerRequest {
     private Long questionId;
     private Long userId;
     private String message;
-
 }
