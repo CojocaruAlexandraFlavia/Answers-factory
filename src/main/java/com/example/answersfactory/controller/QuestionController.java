@@ -1,6 +1,7 @@
 package com.example.answersfactory.controller;
 
 import com.example.answersfactory.model.Question;
+import com.example.answersfactory.model.dto.AddAnswerRequest;
 import com.example.answersfactory.model.dto.QuestionDto;
 import com.example.answersfactory.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +56,14 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    @PutMapping("/add-answer")
+    public ResponseEntity<QuestionDto> addAnswer(@RequestBody AddAnswerRequest addAnswerRequest){
+        QuestionDto result = questionService.addAnswer(addAnswerRequest.getQuestionId(), addAnswerRequest.getUserId(), addAnswerRequest.getMessage());
+        if(result == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
     }
 }
