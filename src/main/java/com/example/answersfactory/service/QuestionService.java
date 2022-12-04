@@ -98,4 +98,8 @@ public class QuestionService {
         }
         return false;
     }
+
+    public void deleteTopic(Long topicId){
+        topicRepository.deleteById(topicId);
+    }
 }

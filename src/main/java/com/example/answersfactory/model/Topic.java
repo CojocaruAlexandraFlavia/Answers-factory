@@ -25,4 +25,9 @@ public class Topic {
     @OneToMany(mappedBy = "topic", cascade= CascadeType.ALL)
     private List<Question> questions;
 
+    @PreRemove
+    public void preRemove(){
+        this.questions.forEach(question -> question.setTopic(null));
+    }
+
 }
