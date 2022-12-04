@@ -40,10 +40,10 @@ public class AnswerService {
         Optional<Question> optionalQuestion = questionService.findQuestionById(answerDto.getQuestionId());
         Optional<User> optionalUser = userService.findUserById(answerDto.getUserId());
         if(optionalQuestion.isPresent() && optionalUser.isPresent()){
-            answer.setMessage(answerDto.getMessage());
-            answer.setQuestion(optionalQuestion.get());
             answer.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             answer.setUser(optionalUser.get());
+            answer.setMessage(answerDto.getMessage());
+            answer.setQuestion(optionalQuestion.get());
             answer = answerRepository.save(answer);
             return convertEntityToDto(answer);
         }

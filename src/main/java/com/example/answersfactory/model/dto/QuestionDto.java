@@ -27,7 +27,7 @@ public class QuestionDto {
         dto.setMessage(question.getMessage());
         dto.setCreateDate(question.getCreateDate());
         dto.setUserId(question.getUser().getId());
-        dto.setTopic(question.getTopic().getName());
+        dto.setTopic(question.getTopic().getName().toString());
 
         if(question.getNotifications() != null){
             dto.setNotifications(question.getNotifications().stream().map(notification -> new NotificationDto(notification.getNotificationType(),

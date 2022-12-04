@@ -1,6 +1,7 @@
 package com.example.answersfactory.model;
 
 
+import com.example.answersfactory.enums.TopicValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
@@ -20,7 +21,8 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private TopicValue name;
 
     @OneToMany(mappedBy = "topic", cascade= CascadeType.ALL)
     private List<Question> questions;
