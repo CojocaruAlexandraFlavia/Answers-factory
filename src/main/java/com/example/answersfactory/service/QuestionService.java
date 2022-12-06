@@ -1,14 +1,10 @@
 package com.example.answersfactory.service;
+import com.example.answersfactory.enums.NotificationStatus;
 import com.example.answersfactory.enums.TopicValue;
-import com.example.answersfactory.model.Answer;
-import com.example.answersfactory.model.Question;
-import com.example.answersfactory.model.Topic;
-import com.example.answersfactory.model.User;
+import com.example.answersfactory.model.*;
+import com.example.answersfactory.model.dto.NotificationDto;
 import com.example.answersfactory.model.dto.QuestionDto;
-import com.example.answersfactory.repository.AnswerRepository;
-import com.example.answersfactory.repository.QuestionRepository;
-import com.example.answersfactory.repository.SuggestionRepository;
-import com.example.answersfactory.repository.TopicRepository;
+import com.example.answersfactory.repository.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -31,18 +26,19 @@ public class QuestionService {
     private final UserService userService;
     private final TopicRepository topicRepository;
     private final SuggestionRepository suggestionRepository;
-
     private final AnswerRepository answerRepository;
+    private final NotificationRepository notificationRepository;
 
     @Autowired
     public QuestionService(QuestionRepository questionRepository, UserService userService,
                            TopicRepository topicRepository,
-                           SuggestionRepository suggestionRepository, AnswerRepository answerRepository) {
+                           SuggestionRepository suggestionRepository, AnswerRepository answerRepository, NotificationRepository notificationRepository) {
         this.questionRepository = questionRepository;
         this.userService = userService;
         this.topicRepository = topicRepository;
         this.suggestionRepository = suggestionRepository;
         this.answerRepository = answerRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
@@ -63,20 +59,16 @@ public class QuestionService {
             question.setUser(optionalUser.get());
              if(optionalTopic.isPresent()){
                  question.setTopic(optionalTopic.get());
-                 question = questionRepository.save(question);
-                 return convertEntityToDto(question);
              }
              else{
-                 Topic t = new Topic();
-                 t.setName(questionDto.getTopic());
-                 topicRepository.save(t);
-                 question.setTopic(t);
-                 question = questionRepository.save(question);
-                 return convertEntityToDto(question);
+                 Topic topic = new Topic();
+                 topic.setName(TopicValue.valueOf(questionDto.getTopic().toUpperCase()));
+                 topic = topicRepository.save(topic);
+                 question.setTopic(topic);
              }
-
-
-       }
+             question = questionRepository.save(question);
+             return convertEntityToDto(question);
+         }
         return null;
     }
 
@@ -104,6 +96,7 @@ public class QuestionService {
     public void deleteTopic(Long topicId){
         topicRepository.deleteById(topicId);
     }
+
     public QuestionDto addAnswer(Long questionId, Long userId, String answer){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
         Optional<User> optionalUser = userService.findUserById(userId);
@@ -117,6 +110,18 @@ public class QuestionService {
             answerRepository.save(a);
            // question.getAnswers().add(a);
             return convertEntityToDto(questionRepository.save(question));
+        }
+        return null;
+    }
+
+    public NotificationDto seeNotification(Long notificationId){
+        Optional<Notification> optionalNotification = notificationRepository.findById(notificationId);
+        if(optionalNotification.isPresent()){
+            Notification notification = optionalNotification.get();
+            notification.setNotificationStatus(NotificationStatus.SEEN);
+            notification = notificationRepository.save(notification);
+            return new NotificationDto(notification.getNotificationType().toString(),
+                    notification.getQuestion().getId(), notification.getNotificationStatus());
         }
         return null;
     }

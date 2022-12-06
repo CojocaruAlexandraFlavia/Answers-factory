@@ -1,7 +1,7 @@
 package com.example.answersfactory.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import com.example.answersfactory.enums.NotificationStatus;
+import com.example.answersfactory.enums.NotificationType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +16,11 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String notificationType;
+    @Enumerated(EnumType.STRING)
+    private NotificationType notificationType;
+
+    @Enumerated(EnumType.STRING)
+    private NotificationStatus notificationStatus;
 
     @ManyToOne
     private Question question;

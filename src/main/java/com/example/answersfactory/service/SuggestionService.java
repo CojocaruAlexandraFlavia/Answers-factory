@@ -34,12 +34,16 @@ public class SuggestionService {
         if(optionalUser.isPresent() && optionalQuestion.isPresent()){
             User user = optionalUser.get();
             Question question = optionalQuestion.get();
-            Suggestion suggestion = new Suggestion();
-            suggestion.setUser(user);
-            suggestion.setQuestion(question);
-            suggestion.setMessage(dto.getMessage());
-            suggestion = suggestionRepository.save(suggestion);
-            return convertEntityToDto(suggestion);
+
+            //check if the user who sent the suggestion is not the same as the one who posted the question
+            if(!question.getUser().getId().equals(user.getId())){
+                Suggestion suggestion = new Suggestion();
+                suggestion.setUser(user);
+                suggestion.setQuestion(question);
+                suggestion.setMessage(dto.getMessage());
+                suggestion = suggestionRepository.save(suggestion);
+                return convertEntityToDto(suggestion);
+            }
         }
         return null;
     }
