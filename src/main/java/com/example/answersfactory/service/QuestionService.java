@@ -122,6 +122,23 @@ public class QuestionService {
         }
         return null;
     }
+    public QuestionDto closeQuestion(Long questionId, Long userId){
+        Optional<Question> optionalQuestion = findQuestionById(questionId);
+        Optional<User> optionalUser = userService.findUserById(userId);
+        if(optionalQuestion.isPresent() && optionalUser.isPresent()) {
+            Question question = optionalQuestion.get();
+            if (question.getUser().getId().equals(optionalUser.get().getId())) {
+                for (Answer a: question.getAnswers()) {
+                    if(a.isAcceptedStatus() && a.getLikes() >= 100){
+                        question.setStatus("CLOSED");
+                        return convertEntityToDto(questionRepository.save(question));
+                    }
+                }
+
+            }
+        }
+        return null;
+    }
 
     public QuestionDto sortByOption(Long questionId, String option, String type){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
@@ -152,4 +169,7 @@ public class QuestionService {
         }
         return null;
     }
+//    private Boolean checkIfUserQuestionRelationshipExists(Long userId, Long questionId){
+//
+//    }
 }

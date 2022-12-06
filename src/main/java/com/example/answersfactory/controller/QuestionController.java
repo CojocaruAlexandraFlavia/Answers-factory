@@ -1,10 +1,7 @@
 package com.example.answersfactory.controller;
 
 import com.example.answersfactory.model.Question;
-import com.example.answersfactory.model.dto.AddAnswerRequest;
-import com.example.answersfactory.model.dto.AnswerDto;
-import com.example.answersfactory.model.dto.MarkAnswerRequest;
-import com.example.answersfactory.model.dto.QuestionDto;
+import com.example.answersfactory.model.dto.*;
 import com.example.answersfactory.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,6 +82,13 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
-
+    }
+    @PutMapping("/close-question")
+    public ResponseEntity<QuestionDto> closeQuestion(@RequestBody CloseQuestion closeQuestion){
+        QuestionDto result = questionService.closeQuestion(closeQuestion.getQuestionId(), closeQuestion.getUserId());
+        if(result == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
