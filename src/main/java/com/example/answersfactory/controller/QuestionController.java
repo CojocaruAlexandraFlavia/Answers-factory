@@ -2,11 +2,13 @@ package com.example.answersfactory.controller;
 
 import com.example.answersfactory.model.Question;
 import com.example.answersfactory.model.dto.AddAnswerRequest;
+import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.QuestionDto;
 import com.example.answersfactory.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +66,17 @@ public class QuestionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+
+    }
+    @GetMapping("{id}/answers-order-by/{option}/{type}")
+    public ResponseEntity<QuestionDto> orderAnswers(@PathVariable("id") Long id, @PathVariable("option") String option, @PathVariable String type){
+
+        QuestionDto result = questionService.sortByOption(id, option, type);
+        if(result == null){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
 
     }
 }

@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.answersfactory.model.dto.QuestionDto.convertEntityToDto;
 
@@ -102,7 +100,36 @@ public class QuestionService {
             a.setUser(optionalUser.get()); //not like this
             a.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             answerRepository.save(a);
-           // question.getAnswers().add(a);
+
+            return convertEntityToDto(questionRepository.save(question));
+        }
+        return null;
+    }
+    public QuestionDto sortByOption(Long questionId, String option, String type){
+        Optional<Question> optionalQuestion = findQuestionById(questionId);
+        if(optionalQuestion.isPresent()){
+            Question question = optionalQuestion.get();
+            List<Answer> sortedAnswers = question.getAnswers();
+            if(type.equals("asc")){
+                if(option.equals("popularity")){
+                    Collections.sort(sortedAnswers, new Answer());
+                    question.setAnswers(sortedAnswers);
+                }
+                if(option.equals("date")) {
+                    Collections.sort(sortedAnswers);
+                    question.setAnswers(sortedAnswers);
+                }
+            }
+            if(type.equals("desc")){
+                if(option.equals("popularity")){
+                    Collections.sort(sortedAnswers, Collections.reverseOrder(new Answer()));
+                    question.setAnswers(sortedAnswers);
+                }
+                if(option.equals("date")) {
+                    Collections.sort(sortedAnswers, Collections.reverseOrder());
+                    question.setAnswers(sortedAnswers);
+                }
+            }
             return convertEntityToDto(questionRepository.save(question));
         }
         return null;
