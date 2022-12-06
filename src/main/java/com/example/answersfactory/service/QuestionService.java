@@ -105,6 +105,24 @@ public class QuestionService {
         }
         return null;
     }
+    public QuestionDto markAcceptedAnswer(Long questionId, Long userId, Long answerId){
+        Optional<Question> optionalQuestion = findQuestionById(questionId);
+        Optional<User> optionalUser = userService.findUserById(userId);
+        if(optionalQuestion.isPresent() && optionalUser.isPresent()){
+            Question question = optionalQuestion.get();
+            if(question.getUser().getId().equals(optionalUser.get().getId())){
+                Optional<Answer> optionalAnswer = answerRepository.findById(answerId);
+                if(optionalAnswer.isPresent() && optionalAnswer.get().getQuestion().getId().equals(questionId)){
+                    Answer a = optionalAnswer.get();
+                    a.setAcceptedStatus(true);
+                    answerRepository.save(a);
+                    return convertEntityToDto(questionRepository.save(question));
+                }
+            }
+        }
+        return null;
+    }
+
     public QuestionDto sortByOption(Long questionId, String option, String type){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
         if(optionalQuestion.isPresent()){
