@@ -104,6 +104,16 @@ public class AnswerService {
                 } else {
                     answer.setLikes(answer.getLikes() + 1);
                 }
+
+                //send reminder to accept the answer if number of likes is greater than 100
+                if(answer.getLikes() > 100){
+                    Notification acceptAnswerReminder = new Notification();
+                    acceptAnswerReminder.setQuestion(answer.getQuestion());
+                    acceptAnswerReminder.setNotificationType(NotificationType.REMINDER_ACCEPT_ANSWER);
+                    acceptAnswerReminder.setNotificationStatus(NotificationStatus.UNSEEN);
+                    notificationRepository.save(acceptAnswerReminder);
+                }
+
                 user.addVotedAnswer(answer);
                 userService.insertUser(user);
                 answer = answerRepository.save(answer);

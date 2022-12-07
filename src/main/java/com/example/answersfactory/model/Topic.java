@@ -2,8 +2,6 @@ package com.example.answersfactory.model;
 
 
 import com.example.answersfactory.enums.TopicValue;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
