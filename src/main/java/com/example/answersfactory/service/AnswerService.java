@@ -15,11 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.answersfactory.model.dto.AnswerDto.convertEntityToDto;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class AnswerService {
@@ -121,5 +125,37 @@ public class AnswerService {
             }
         }
         return null;
+    }
+
+    public List<AnswerDto> filterByDate(@NotNull String criteria){
+        List<Answer> answers = answerRepository.findAll();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        if(criteria.equals("week")){
+            answers = answers.stream().filter(answer -> {
+                LocalDateTime localDateTime = LocalDateTime.parse(answer.getDate(), dateTimeFormatter);
+                LocalDateTime now = LocalDateTime.now();
+                WeekFields weekFields = WeekFields.ISO;
+                int weekNumberForAnswerDate = localDateTime.get(weekFields.weekOfWeekBasedYear());
+                int weekNumberForNow = now.get(weekFields.weekOfWeekBasedYear());
+                return localDateTime.getYear() == now.getYear() &&
+                        localDateTime.getMonthValue() == now.getMonthValue() &&
+                        weekNumberForAnswerDate == weekNumberForNow &&
+                        localDateTime.getDayOfWeek().getValue() <= now.getDayOfWeek().getValue();
+            }).collect(toList());
+        } else if(criteria.equals("month")) {
+            answers = answers.stream().filter(answer -> {
+                LocalDateTime localDateTime = LocalDateTime.parse(answer.getDate(), dateTimeFormatter);
+                LocalDateTime now = LocalDateTime.now();
+                return  localDateTime.getYear() == now.getYear() &&
+                        localDateTime.getMonthValue() ==  now.getMonthValue() &&
+                        localDateTime.getDayOfMonth() <= now.getDayOfMonth();
+            }).collect(toList());
+        } else {
+            answers = answers.stream().filter(answer ->
+                    LocalDateTime.parse(answer.getDate(), dateTimeFormatter).getYear() ==
+                            LocalDate.now().getYear()
+            ).collect(toList());
+        }
+        return answers.stream().map(AnswerDto::convertEntityToDto).collect(toList());
     }
 }
