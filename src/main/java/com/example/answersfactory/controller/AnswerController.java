@@ -70,7 +70,11 @@ public class AnswerController {
 
     @GetMapping("/filter-by-date/{criteria}")
     public ResponseEntity<List<AnswerDto>> filterResponsesByDate(@PathVariable("criteria") String criteria){
-        return new ResponseEntity<>(answerService.filterByDate(criteria), HttpStatus.OK);
+        List<AnswerDto> result = answerService.filterByDate(criteria);
+        if(result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

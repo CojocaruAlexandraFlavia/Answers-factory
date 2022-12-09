@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,7 +131,7 @@ public class AnswerService {
     public List<AnswerDto> filterByDate(@NotNull String criteria){
         List<Answer> answers = answerRepository.findAll();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        if(criteria.equals("week")){
+        if(criteria.equalsIgnoreCase("week")){
             answers = answers.stream().filter(answer -> {
                 LocalDateTime localDateTime = LocalDateTime.parse(answer.getDate(), dateTimeFormatter);
                 LocalDateTime now = LocalDateTime.now();
@@ -142,7 +143,7 @@ public class AnswerService {
                         weekNumberForAnswerDate == weekNumberForNow &&
                         localDateTime.getDayOfWeek().getValue() <= now.getDayOfWeek().getValue();
             }).collect(toList());
-        } else if(criteria.equals("month")) {
+        } else if(criteria.equalsIgnoreCase("month")) {
             answers = answers.stream().filter(answer -> {
                 LocalDateTime localDateTime = LocalDateTime.parse(answer.getDate(), dateTimeFormatter);
                 LocalDateTime now = LocalDateTime.now();
@@ -150,12 +151,13 @@ public class AnswerService {
                         localDateTime.getMonthValue() ==  now.getMonthValue() &&
                         localDateTime.getDayOfMonth() <= now.getDayOfMonth();
             }).collect(toList());
-        } else {
+        } else if (criteria.equalsIgnoreCase("year")) {
             answers = answers.stream().filter(answer ->
                     LocalDateTime.parse(answer.getDate(), dateTimeFormatter).getYear() ==
                             LocalDate.now().getYear()
             ).collect(toList());
-        }
+        } else
+            return new ArrayList<>();
         return answers.stream().map(AnswerDto::convertEntityToDto).collect(toList());
     }
 }

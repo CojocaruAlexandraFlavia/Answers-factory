@@ -27,9 +27,15 @@ public class UserDto {
         dto.setLastName(user.getLastName());
         dto.setDescription(user.getDescription());
         dto.setCorrectAnswers(user.getCorrectAnswers());
-        dto.setAnswers(user.getAnswers().stream().map(AnswerDto::convertEntityToDto).collect(toList()));
-        dto.setQuestions(user.getQuestions().stream().map(QuestionDto::convertEntityToDto).collect(toList()));
-        dto.setSuggestions(user.getSuggestions().stream().map(SuggestionDto::convertEntityToDto).collect(toList()));
+        if (user.getAnswers() != null) {
+            dto.setAnswers(user.getAnswers().stream().map(AnswerDto::convertEntityToDto).collect(toList()));
+        }
+        if (user.getQuestions() != null) {
+            dto.setQuestions(user.getQuestions().stream().map(QuestionDto::convertEntityToDto).collect(toList()));
+        }
+        if(user.getSuggestions() != null) {
+            dto.setSuggestions(user.getSuggestions().stream().map(SuggestionDto::convertEntityToDto).collect(toList()));
+        }
         return dto;
     }
 
