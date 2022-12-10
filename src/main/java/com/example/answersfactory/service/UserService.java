@@ -34,7 +34,8 @@ public class UserService implements UserDetailsService {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
-            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getAuthorities());
+            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+                    user.getAuthorities());
         }
         return new org.springframework.security.core.userdetails.User("", "", new ArrayList<>());
     }

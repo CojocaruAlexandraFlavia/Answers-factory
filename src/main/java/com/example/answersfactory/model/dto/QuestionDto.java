@@ -30,8 +30,8 @@ public class QuestionDto {
         dto.setTopic(question.getTopic().getName().toString());
 
         if(question.getNotifications() != null){
-            dto.setNotifications(question.getNotifications().stream().map(notification -> new NotificationDto(notification.getNotificationType(),
-                    notification.getQuestion().getId())).collect(Collectors.toList()));
+            dto.setNotifications(question.getNotifications().stream().map(notification -> new NotificationDto(notification.getNotificationType().toString(),
+                    notification.getQuestion().getId(), notification.getNotificationStatus())).collect(Collectors.toList()));
         }
         if(question.getAnswers() !=null){
             dto.setAnswers(question.getAnswers().stream().map(AnswerDto::convertEntityToDto).collect(toList()));

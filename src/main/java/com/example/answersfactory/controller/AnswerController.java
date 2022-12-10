@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.answersfactory.model.dto.AnswerDto.convertEntityToDto;
@@ -63,6 +64,15 @@ public class AnswerController {
         AnswerDto result = answerService.voteResponse(request);
         if(result == null){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter-by-date/{criteria}")
+    public ResponseEntity<List<AnswerDto>> filterResponsesByDate(@PathVariable("criteria") String criteria){
+        List<AnswerDto> result = answerService.filterByDate(criteria);
+        if(result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

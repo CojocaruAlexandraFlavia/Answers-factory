@@ -2,8 +2,6 @@ package com.example.answersfactory.model;
 
 
 import com.example.answersfactory.enums.TopicValue;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,5 +24,10 @@ public class Topic {
 
     @OneToMany(mappedBy = "topic", cascade= CascadeType.ALL)
     private List<Question> questions;
+
+    @PreRemove
+    public void preRemove(){
+        this.questions.forEach(question -> question.setTopic(null));
+    }
 
 }
