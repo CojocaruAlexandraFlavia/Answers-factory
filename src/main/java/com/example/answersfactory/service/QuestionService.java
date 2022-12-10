@@ -1,5 +1,7 @@
 package com.example.answersfactory.service;
 import com.example.answersfactory.enums.NotificationStatus;
+import com.example.answersfactory.enums.NotificationType;
+import com.example.answersfactory.enums.QuestionStatus;
 import com.example.answersfactory.enums.TopicValue;
 import com.example.answersfactory.model.*;
 import com.example.answersfactory.model.dto.NotificationDto;
@@ -61,7 +63,7 @@ public class QuestionService {
          if(optionalUser.isPresent()){
             question.setMessage(questionDto.getMessage());
             question.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-            question.setStatus(questionDto.getStatus());
+            question.setStatus(QuestionStatus.OPEN);
             question.setUser(optionalUser.get());
              if(optionalTopic.isPresent()){
                  question.setTopic(optionalTopic.get());
@@ -131,8 +133,15 @@ public class QuestionService {
                             AnswerService.ReceiveBadge(ratedUser, userService, badgeRepository);
                         }
                     }
-
-
+                    if(a.getLikes() >= 100){
+                        if(!question.getStatus().equals(QuestionStatus.CLOSED)){
+                            Notification acceptAnswerReminder = new Notification();
+                            acceptAnswerReminder.setQuestion(a.getQuestion());
+                            acceptAnswerReminder.setNotificationType(NotificationType.REMINDER_CLOSE_QUESTION);
+                            acceptAnswerReminder.setNotificationStatus(NotificationStatus.UNSEEN);
+                            notificationRepository.save(acceptAnswerReminder);
+                        }
+                    }
                     return convertEntityToDto(questionRepository.save(question));
                 }
             }
@@ -147,7 +156,7 @@ public class QuestionService {
             if (question.getUser().getId().equals(optionalUser.get().getId())) {
                 for (Answer a: question.getAnswers()) {
                     if(a.isAcceptedStatus() && a.getLikes() >= 100){
-                        question.setStatus("CLOSED");
+                        question.setStatus(QuestionStatus.CLOSED);
                         return convertEntityToDto(questionRepository.save(question));
                     }
                 }

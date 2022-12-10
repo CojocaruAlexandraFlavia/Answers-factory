@@ -1,5 +1,6 @@
 package com.example.answersfactory.model;
 
+import com.example.answersfactory.enums.QuestionStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +20,8 @@ public class Question  implements Comparator<Question> {
     private Long id;
 
     private String message;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private QuestionStatus status;
     private String createDate;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)

@@ -3,6 +3,7 @@ package com.example.answersfactory.service;
 import com.example.answersfactory.enums.BadgeType;
 import com.example.answersfactory.enums.NotificationStatus;
 import com.example.answersfactory.enums.NotificationType;
+import com.example.answersfactory.enums.QuestionStatus;
 import com.example.answersfactory.model.*;
 import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.VoteResponseRequest;
@@ -117,12 +118,23 @@ public class AnswerService {
                 }
 
                 //send reminder to accept the answer if number of likes is greater than 100
-                if(answer.getLikes() > 100){
-                    Notification acceptAnswerReminder = new Notification();
-                    acceptAnswerReminder.setQuestion(answer.getQuestion());
-                    acceptAnswerReminder.setNotificationType(NotificationType.REMINDER_ACCEPT_ANSWER);
-                    acceptAnswerReminder.setNotificationStatus(NotificationStatus.UNSEEN);
-                    notificationRepository.save(acceptAnswerReminder);
+                if(answer.getLikes() >= 100){
+                    if(!answer.isAcceptedStatus()){
+                        Notification acceptAnswerReminder = new Notification();
+                        acceptAnswerReminder.setQuestion(answer.getQuestion());
+                        acceptAnswerReminder.setNotificationType(NotificationType.REMINDER_ACCEPT_ANSWER);
+                        acceptAnswerReminder.setNotificationStatus(NotificationStatus.UNSEEN);
+                        notificationRepository.save(acceptAnswerReminder);
+                    }
+                    else{
+                        if(!answer.getQuestion().getStatus().equals(QuestionStatus.CLOSED)){
+                            Notification acceptAnswerReminder = new Notification();
+                            acceptAnswerReminder.setQuestion(answer.getQuestion());
+                            acceptAnswerReminder.setNotificationType(NotificationType.REMINDER_CLOSE_QUESTION);
+                            acceptAnswerReminder.setNotificationStatus(NotificationStatus.UNSEEN);
+                            notificationRepository.save(acceptAnswerReminder);
+                        }
+                    }
                 }
 
                 user.addVotedAnswer(answer);

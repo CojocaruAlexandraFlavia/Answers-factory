@@ -1,5 +1,6 @@
 package com.example.answersfactory.model.dto;
 
+import com.example.answersfactory.enums.QuestionStatus;
 import com.example.answersfactory.model.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class QuestionDto {
 
     public static @NotNull QuestionDto convertEntityToDto(@NotNull Question question){
         QuestionDto dto = new QuestionDto();
-        dto.setStatus(question.getStatus());
+        dto.setStatus(question.getStatus().toString());
         dto.setMessage(question.getMessage());
         dto.setCreateDate(question.getCreateDate());
         dto.setUserId(question.getUser().getId());
