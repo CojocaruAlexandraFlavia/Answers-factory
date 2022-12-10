@@ -7,7 +7,7 @@ public class TopicMock {
 
     public static @NotNull Topic topic() {
         Topic topic = new Topic();
-        topic.setName(TopicValue.AGRICULTURE);
+        topic.setName(TopicValue.FOOD);
         return topic;
     }
 

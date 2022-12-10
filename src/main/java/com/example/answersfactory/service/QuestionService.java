@@ -50,6 +50,7 @@ public class QuestionService {
     public Optional<Question> findQuestionById(Long id) {
         return questionRepository.findById(id);
     }
+
     public List<Question> findAll(){
         return questionRepository.findAll();
     }
@@ -60,18 +61,23 @@ public class QuestionService {
         TopicValue t = TopicValue.valueOf(questionDto.getTopic().toUpperCase(Locale.ROOT));
         Optional<Topic> optionalTopic = topicRepository.findByName(t);
 
-         if(optionalUser.isPresent()){
+        if(optionalUser.isPresent()){
             question.setMessage(questionDto.getMessage());
             question.setCreateDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             question.setStatus(QuestionStatus.OPEN);
             question.setUser(optionalUser.get());
-             if(optionalTopic.isPresent()){
-                 question.setTopic(optionalTopic.get());
-                 question = questionRepository.save(question);
-                 return convertEntityToDto(question);
-             }
-
-       }
+            if(optionalTopic.isPresent()){
+                question.setTopic(optionalTopic.get());
+            }
+            else{
+                Topic topic = new Topic();
+                topic.setName(TopicValue.valueOf(questionDto.getTopic().toUpperCase()));
+                topic = topicRepository.save(topic);
+                question.setTopic(topic);
+            }
+            question = questionRepository.save(question);
+            return convertEntityToDto(question);
+        }
         return null;
     }
 
