@@ -47,6 +47,9 @@ public class QuestionService {
     public Optional<Question> findQuestionById(Long id) {
         return questionRepository.findById(id);
     }
+    public List<Question> findAll(){
+        return questionRepository.findAll();
+    }
 
     public QuestionDto saveQuestion(@NotNull QuestionDto questionDto){
         Question question = new Question();

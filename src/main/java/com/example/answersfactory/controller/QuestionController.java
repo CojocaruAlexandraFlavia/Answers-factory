@@ -13,9 +13,13 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.answersfactory.model.dto.QuestionDto.convertEntityToDto;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @Transactional
@@ -41,6 +45,16 @@ public class QuestionController {
             return new ResponseEntity<>(questionDto, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/get-by-popularity")
+    public List<QuestionDto> findAllByPopularity(){
+        List<Question> optionalQuestions = questionService.findAll();
+        Collections.sort(optionalQuestions, new Question());
+        if(!optionalQuestions.isEmpty()){
+            return optionalQuestions.stream().map(QuestionDto::convertEntityToDto).collect(toList());
+        }
+        return new ArrayList<>();
     }
 
     @DeleteMapping("/delete-by-id/{id}")
