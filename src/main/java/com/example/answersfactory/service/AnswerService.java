@@ -1,14 +1,13 @@
 package com.example.answersfactory.service;
 
+import com.example.answersfactory.enums.BadgeType;
 import com.example.answersfactory.enums.NotificationStatus;
 import com.example.answersfactory.enums.NotificationType;
-import com.example.answersfactory.model.Answer;
-import com.example.answersfactory.model.Notification;
-import com.example.answersfactory.model.Question;
-import com.example.answersfactory.model.User;
+import com.example.answersfactory.model.*;
 import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.VoteResponseRequest;
 import com.example.answersfactory.repository.AnswerRepository;
+import com.example.answersfactory.repository.BadgeRepository;
 import com.example.answersfactory.repository.NotificationRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.example.answersfactory.model.dto.AnswerDto.convertEntityToDto;
 import static java.util.stream.Collectors.toList;
@@ -31,14 +31,16 @@ public class AnswerService {
 
     private final QuestionService questionService;
     private final AnswerRepository answerRepository;
+    private final BadgeRepository badgeRepository;
     private final UserService userService;
     private final NotificationRepository notificationRepository;
 
     @Autowired
     public AnswerService(QuestionService questionService, AnswerRepository answerRepository,
-                         NotificationRepository notificationRepository, UserService userService) {
+                         BadgeRepository badgeRepository, NotificationRepository notificationRepository, UserService userService) {
         this.questionService = questionService;
         this.answerRepository = answerRepository;
+        this.badgeRepository = badgeRepository;
         this.notificationRepository = notificationRepository;
         this.userService = userService;
     }
@@ -108,6 +110,10 @@ public class AnswerService {
                     answer.setDislikes(answer.getDislikes() + 1);
                 } else {
                     answer.setLikes(answer.getLikes() + 1);
+                    Optional<User> ratedUser = userService.findUserById(answer.getUser().getId());
+                    if(answer.getLikes() >= 99 && ratedUser.isPresent()){
+                        ReceiveBadge(ratedUser, userService, badgeRepository);
+                    }
                 }
 
                 //send reminder to accept the answer if number of likes is greater than 100
@@ -126,6 +132,38 @@ public class AnswerService {
             }
         }
         return null;
+    }
+
+    static void ReceiveBadge(Optional<User> ratedUser, UserService userService, BadgeRepository badgeRepository) {
+        if(ratedUser.isPresent()){
+            User ratedUser1 = ratedUser.get();
+            ratedUser1.setCorrectAnswers(ratedUser1.getCorrectAnswers()+1);
+            if(ratedUser1.getCorrectAnswers() >= 10){
+                Badge newBadge = new Badge();
+                if(ratedUser1.getCorrectAnswers() <= 50){
+                    newBadge.setName(BadgeType.JUNIOR);
+                }
+                if(ratedUser1.getCorrectAnswers() > 50 && ratedUser1.getCorrectAnswers() <= 100){
+                    newBadge.setName(BadgeType.MIDDLE);
+                }
+                if(ratedUser1.getCorrectAnswers() > 100 && ratedUser1.getCorrectAnswers() <= 200){
+                    newBadge.setName(BadgeType.SENIOR);
+                }
+                if(ratedUser1.getCorrectAnswers() > 200){
+                    newBadge.setName(BadgeType.EXPERT);
+                }
+                newBadge.setDate((LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))));
+                Set<Badge> userBadges = ratedUser1.getBadges();
+                userBadges.add(newBadge);
+                badgeRepository.save(newBadge);
+                ratedUser1.setBadges(userBadges);
+
+            }
+
+            userService.insertUser(ratedUser1);
+        }
+
+
     }
 
     public List<AnswerDto> filterByDate(@NotNull String criteria){

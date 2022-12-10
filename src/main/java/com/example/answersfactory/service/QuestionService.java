@@ -27,18 +27,19 @@ public class QuestionService {
     private final UserService userService;
     private final TopicRepository topicRepository;
     private final SuggestionRepository suggestionRepository;
-
+    private final BadgeRepository badgeRepository;
     private final AnswerRepository answerRepository;
     private final NotificationRepository notificationRepository;
 
     @Autowired
     public QuestionService(QuestionRepository questionRepository, UserService userService,
                            TopicRepository topicRepository,
-                           SuggestionRepository suggestionRepository, AnswerRepository answerRepository, NotificationRepository notificationRepository) {
+                           SuggestionRepository suggestionRepository, BadgeRepository badgeRepository, AnswerRepository answerRepository, NotificationRepository notificationRepository) {
         this.questionRepository = questionRepository;
         this.userService = userService;
         this.topicRepository = topicRepository;
         this.suggestionRepository = suggestionRepository;
+        this.badgeRepository = badgeRepository;
         this.answerRepository = answerRepository;
         this.notificationRepository = notificationRepository;
     }
@@ -124,6 +125,14 @@ public class QuestionService {
                     Answer a = optionalAnswer.get();
                     a.setAcceptedStatus(true);
                     answerRepository.save(a);
+                    if(a.getLikes() <= 99){
+                        Optional<User> ratedUser = userService.findUserById(a.getUser().getId());
+                        if(ratedUser.isPresent()){
+                            AnswerService.ReceiveBadge(ratedUser, userService, badgeRepository);
+                        }
+                    }
+
+
                     return convertEntityToDto(questionRepository.save(question));
                 }
             }

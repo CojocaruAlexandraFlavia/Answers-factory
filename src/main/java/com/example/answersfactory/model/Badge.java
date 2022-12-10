@@ -1,5 +1,6 @@
 package com.example.answersfactory.model;
 
+import com.example.answersfactory.enums.BadgeType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,10 @@ public class Badge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private BadgeType name;
+
+    private String date;
 
     @ManyToMany(mappedBy = "badges", cascade= CascadeType.ALL)
     private Set<User> users;
