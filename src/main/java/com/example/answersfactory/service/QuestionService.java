@@ -174,7 +174,7 @@ public class QuestionService {
             List<Answer> sortedAnswers = question.getAnswers();
             if(type.equals("asc")){
                 if(option.equals("popularity")){
-                    Collections.sort(sortedAnswers, new Answer());
+                    sortedAnswers.sort(new Answer());
                     question.setAnswers(sortedAnswers);
                 }
                 if(option.equals("date")) {
@@ -184,11 +184,11 @@ public class QuestionService {
             }
             if(type.equals("desc")){
                 if(option.equals("popularity")){
-                    Collections.sort(sortedAnswers, Collections.reverseOrder(new Answer()));
+                    sortedAnswers.sort(Collections.reverseOrder(new Answer()));
                     question.setAnswers(sortedAnswers);
                 }
                 if(option.equals("date")) {
-                    Collections.sort(sortedAnswers, Collections.reverseOrder());
+                    sortedAnswers.sort(Collections.reverseOrder());
                     question.setAnswers(sortedAnswers);
                 }
             }
@@ -314,7 +314,7 @@ public class QuestionService {
                 if(ratedUser1.getCorrectAnswers() > 200){
                     newBadge.setName(BadgeType.EXPERT);
                 }
-                newBadge.setDate((LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))));
+                //newBadge.setDate((LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))));
                 Set<Badge> userBadges = ratedUser1.getBadges();
                 userBadges.add(newBadge);
                 badgeRepository.save(newBadge);

@@ -42,7 +42,7 @@ class SuggestionControllerTest {
 
     @SneakyThrows
     @Test
-    void testSaveSuggestion() {
+    void testSaveSuggestionOk() {
         SuggestionDto dto = suggestionDto();
         when(suggestionService.saveSuggestion(any())).thenReturn(dto);
         mockMvc.perform(post("/suggestion/save")
@@ -55,10 +55,29 @@ class SuggestionControllerTest {
 
     @SneakyThrows
     @Test
-    void testDeleteSuggestionById() {
+    void testSaveSuggestionNotOk() {
+        when(suggestionService.saveSuggestion(any())).thenReturn(null);
+        mockMvc.perform(post("/suggestion/save")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(suggestionDto())))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void testDeleteSuggestionByIdOK() {
         when(suggestionService.deleteSuggestion(anyLong())).thenReturn(true);
         mockMvc.perform(delete("/suggestion/delete-by-id/{id}", 1L))
                 .andExpect(status().isOk());
+    }
+
+    @SneakyThrows
+    @Test
+    void testDeleteSuggestionByIdNotOK() {
+        when(suggestionService.deleteSuggestion(anyLong())).thenReturn(false);
+        mockMvc.perform(delete("/suggestion/delete-by-id/{id}", 1L))
+                .andExpect(status().isNotFound());
     }
 
     private @NotNull SuggestionDto suggestionDto() {

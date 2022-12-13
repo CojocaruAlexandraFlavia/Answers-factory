@@ -1,6 +1,8 @@
 package com.example.answersfactory.controller;
 
 import com.example.answersfactory.enums.NotificationStatus;
+import com.example.answersfactory.model.dto.CloseQuestion;
+import com.example.answersfactory.model.dto.MarkAnswerRequest;
 import com.example.answersfactory.model.dto.NotificationDto;
 import com.example.answersfactory.model.dto.QuestionDto;
 import com.example.answersfactory.service.QuestionService;
@@ -15,12 +17,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static com.example.answersfactory.model.QuestionDtoMock.questionDto;
 import static com.example.answersfactory.model.QuestionMock.question;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,25 +57,42 @@ class QuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(dto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.topic").value("topic"));
+                .andExpect(jsonPath("$.topic").value("food"));
     }
 
     @SneakyThrows
     @Test
-    void testFindQuestionById() {
+    void testFindQuestionByIdOK() {
         when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
         mockMvc.perform(get("/question/get-by-id/{id}", 1L)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("status"));
+                .andExpect(jsonPath("$.status").value("OPEN"));
     }
 
     @SneakyThrows
     @Test
-    void testDeleteQuestionById() {
+    void testFindQuestionByIdNotOK() {
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(get("/question/get-by-id/{id}", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void testDeleteQuestionByIdOK() {
         when(questionService.deleteQuestion(anyLong())).thenReturn(true);
         mockMvc.perform(delete("/question/delete-by-id/{id}", 1L))
                 .andExpect(status().isOk());
+    }
+
+    @SneakyThrows
+    @Test
+    void testDeleteQuestionByIdNotOK() {
+        when(questionService.deleteQuestion(anyLong())).thenReturn(false);
+        mockMvc.perform(delete("/question/delete-by-id/{id}", 1L))
+                .andExpect(status().isNotFound());
     }
 
     @SneakyThrows
@@ -84,11 +105,7 @@ class QuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(dto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("status"));
-    }
-
-    @Test
-    void addAnswer() {
+                .andExpect(jsonPath("$.status").value("OPEN"));
     }
 
     @SneakyThrows
@@ -101,6 +118,78 @@ class QuestionControllerTest {
                 .andExpect(jsonPath("$.questionId").value(1L));
     }
 
+    @Test
+    @SneakyThrows
+    void testFindAllByPopularityEmpty() {
+        when(questionService.findAll()).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/question/get-by-popularity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    @SneakyThrows
+    void testFindAllByPopularityNotEmpty() {
+        when(questionService.findAll()).thenReturn(singletonList(question()));
+        mockMvc.perform(get("/question/get-by-popularity")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @SneakyThrows
+    @Test
+    void testOrderAnswersNotOK() {
+        when(questionService.sortByOption(anyLong(), anyString(), anyString())).thenReturn(null);
+        mockMvc.perform(get("/question/{id}/answers-order-by/{option}/{type}", 1L, "date", "asc")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void testOrderAnswersOK() {
+        when(questionService.sortByOption(anyLong(), anyString(), anyString())).thenReturn(questionDto());
+        mockMvc.perform(get("/question/{id}/answers-order-by/{option}/{type}", 1L, "date", "asc")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.answers", hasSize(1)));
+    }
+
+    @Test
+    @SneakyThrows
+    void testMarkAcceptedAnswer() {
+        MarkAnswerRequest request = new MarkAnswerRequest();
+        request.setAnswerId(1L);
+        request.setQuestionId(1L);
+        request.setUserId(1L);
+        when(questionService.markAcceptedAnswer(anyLong(), anyLong(), anyLong())).thenReturn(questionDto());
+        mockMvc.perform(put("/question/mark-accepted-answer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.topic").value("food"));
+    }
+
+    @Test
+    @SneakyThrows
+    void testCloseQuestion() {
+        CloseQuestion request = new CloseQuestion();
+        request.setQuestionId(1L);
+        request.setUserId(1L);
+        when(questionService.closeQuestion(anyLong(), anyLong())).thenReturn(questionDto());
+        mockMvc.perform(put("/question/close-question")
+                .content(asJsonString(request))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.topic").value("food"));
+    }
+
     private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
@@ -108,4 +197,5 @@ class QuestionControllerTest {
             throw new RuntimeException(e);
         }
     }
+
 }

@@ -19,8 +19,6 @@ public class Badge {
     @Enumerated(EnumType.STRING)
     private BadgeType name;
 
-    private String date;
-
     @ManyToMany(mappedBy = "badges", cascade= CascadeType.ALL)
     private Set<User> users;
 

@@ -50,7 +50,7 @@ public class QuestionController {
     @GetMapping("/get-by-popularity")
     public List<QuestionDto> findAllByPopularity(){
         List<Question> optionalQuestions = questionService.findAll();
-        Collections.sort(optionalQuestions, new Question());
+        optionalQuestions.sort(new Question());
         if(!optionalQuestions.isEmpty()){
             return optionalQuestions.stream().map(QuestionDto::convertEntityToDto).collect(toList());
         }

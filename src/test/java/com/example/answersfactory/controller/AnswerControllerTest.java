@@ -59,12 +59,21 @@ class AnswerControllerTest {
 
     @SneakyThrows
     @Test
-    void testFindAnswerById() {
+    void testFindAnswerByIdOK() {
         when(questionService.findAnswerById(anyLong())).thenReturn(Optional.of(answer()));
         mockMvc.perform(get("/answer/get-by-id/{id}", 1L)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.questionId").value(1L));
+    }
+
+    @SneakyThrows
+    @Test
+    void testFindAnswerByIdNotOK() {
+        when(questionService.findAnswerById(anyLong())).thenReturn(Optional.empty());
+        mockMvc.perform(get("/answer/get-by-id/{id}", 1L)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @SneakyThrows
@@ -85,7 +94,7 @@ class AnswerControllerTest {
 
     @SneakyThrows
     @Test
-    void testUpdateAnswer() {
+    void testUpdateAnswerOK() {
         AnswerDto dto = answerDto();
         when(questionService.updateAnswer(anyLong(), any())).thenReturn(dto);
         mockMvc.perform(put("/answer/update/{id}", 1L)
@@ -98,7 +107,18 @@ class AnswerControllerTest {
 
     @SneakyThrows
     @Test
-    void testVoteResponse() {
+    void testUpdateAnswerNotOK() {
+        when(questionService.updateAnswer(anyLong(), any())).thenReturn(null);
+        mockMvc.perform(put("/answer/update/{id}", 1L)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(answerDto())))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void testVoteResponseOK() {
         AnswerDto dto = answerDto();
         when(questionService.voteResponse(any())).thenReturn(dto);
         mockMvc.perform(put("/answer/vote-response")
@@ -107,6 +127,17 @@ class AnswerControllerTest {
                 .content(asJsonString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.questionId").value(1L));
+    }
+
+    @SneakyThrows
+    @Test
+    void testVoteResponseNotOK() {
+        when(questionService.voteResponse(any())).thenReturn(null);
+        mockMvc.perform(put("/answer/vote-response")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(answerDto())))
+                .andExpect(status().isInternalServerError());
     }
 
     @SneakyThrows
