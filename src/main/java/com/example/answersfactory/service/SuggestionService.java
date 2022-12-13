@@ -27,6 +27,9 @@ public class SuggestionService {
         this.userService = userService;
         this.questionService = questionService;
     }
+    public Optional<Suggestion> findSuggestionById(Long id){
+        return suggestionRepository.findById(id);
+    }
 
     public SuggestionDto saveSuggestion(@NotNull SuggestionDto dto){
         Optional<User> optionalUser = userService.findUserById(dto.getUserId());
@@ -48,9 +51,6 @@ public class SuggestionService {
         return null;
     }
 
-    public Optional<Suggestion> findSuggestionById(Long id){
-        return suggestionRepository.findById(id);
-    }
 
     public boolean deleteSuggestion(Long suggestionId){
         Optional<Suggestion> optionalSuggestion = findSuggestionById(suggestionId);

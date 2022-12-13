@@ -1,11 +1,10 @@
 package com.example.answersfactory.service;
 
-import com.example.answersfactory.model.Answer;
-import com.example.answersfactory.model.Question;
-import com.example.answersfactory.model.User;
+import com.example.answersfactory.model.*;
 import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.VoteResponseRequest;
 import com.example.answersfactory.repository.AnswerRepository;
+import com.example.answersfactory.repository.BadgeRepository;
 import com.example.answersfactory.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,11 +12,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.answersfactory.model.AnswerDtoMock.answerDto;
 import static com.example.answersfactory.model.AnswerMock.answer;
+import static com.example.answersfactory.model.QuestionMock.question;
 import static com.example.answersfactory.model.UserMock.user;
 import static com.example.answersfactory.model.VoteResponseRequestMock.voteResponseRequest;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +40,9 @@ class AnswerServiceTest {
 
     @Mock
     private NotificationRepository notificationRepository;
+
+    @Mock
+    private BadgeRepository badgeRepository;
 
     @InjectMocks
     private AnswerService answerService;
@@ -92,16 +97,52 @@ class AnswerServiceTest {
     }
 
     @Test
+    void voteResponse(){
+
+        Notification notification = new Notification();
+        notification.setId(1L);
+        notification.setQuestion(question());
+        when(answerService.findAnswerById(any())).thenReturn(Optional.of(answer()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(notificationRepository.save(notification)).thenReturn(notification);
+        when(answerRepository.save(any())).thenReturn(Optional.of(answer()));
+        assertEquals(1L, notification.getId());
+
+    }
+
+    @Test
     void updateAnswer() {
+        when(answerService.findAnswerById(any())).thenReturn(Optional.of(answer()));
+        when(answerRepository.save(any())).thenReturn(Optional.of(answer()));
+        assertNotNull(answer().getId());
+    }
+
+    @Test
+    void findAll() {
+        List<Answer> answerList = new ArrayList<>();
+        answerList.add(answer());
+        when(answerRepository.findAll()).thenReturn(answerList);
+        assertEquals(1, answerList.size());
+    }
+
+
+    @Test
+    void receiveBadge(){
+        Badge badge = new Badge();
+        badge.setId(1L);
+        badge.setUsers(new HashSet<>());
+        when(badgeRepository.save(badge)).thenReturn(badge);
+        assertEquals(1L, badge.getId());
 
     }
 
     @Test
     void deleteAnswer() {
     }
-
     @Test
-    void filterByDate() {
+    void filterByDate(){
+
     }
+
 
 }

@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,14 @@ public class QuestionServiceTest {
         assertEquals(1, result.get().getId());
     }
 
+
+    @Test
+    void findAll(){
+        List<Question> questions = new ArrayList<>();
+        questions.add(question());
+        when(questionRepository.findAll()).thenReturn(questions);
+        assertEquals(1, questions.size());
+    }
     @Test
     void saveQuestion(){
 
