@@ -1,7 +1,7 @@
 package com.example.answersfactory.controller;
 
 import com.example.answersfactory.model.dto.AnswerDto;
-import com.example.answersfactory.service.AnswerService;
+import com.example.answersfactory.service.QuestionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ class AnswerControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @MockBean
-    private AnswerService answerService;
+    private QuestionService questionService;
 
     @BeforeEach
     void setUp(){
@@ -48,7 +48,7 @@ class AnswerControllerTest {
     @Test
     void testSaveAnswer() {
         AnswerDto answerDto = answerDto();
-        when(answerService.saveAnswer(any())).thenReturn(answerDto);
+        when(questionService.saveAnswer(any())).thenReturn(answerDto);
         mockMvc.perform(post("/answer/save")
                         .content(asJsonString(answerDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,7 +60,7 @@ class AnswerControllerTest {
     @SneakyThrows
     @Test
     void testFindAnswerById() {
-        when(answerService.findAnswerById(anyLong())).thenReturn(Optional.of(answer()));
+        when(questionService.findAnswerById(anyLong())).thenReturn(Optional.of(answer()));
         mockMvc.perform(get("/answer/get-by-id/{id}", 1L)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -70,7 +70,7 @@ class AnswerControllerTest {
     @SneakyThrows
     @Test
     void testDeleteAnswerByIdSuccess() {
-        when(answerService.deleteAnswer(anyLong())).thenReturn(true);
+        when(questionService.deleteAnswer(anyLong())).thenReturn(true);
         mockMvc.perform(delete("/answer/delete-by-id/{id}", 1L))
                 .andExpect(status().isOk());
     }
@@ -78,7 +78,7 @@ class AnswerControllerTest {
     @SneakyThrows
     @Test
     void testDeleteAnswerByIdFailed() {
-        when(answerService.deleteAnswer(anyLong())).thenReturn(false);
+        when(questionService.deleteAnswer(anyLong())).thenReturn(false);
         mockMvc.perform(delete("/answer/delete-by-id/{id}", 1L))
                 .andExpect(status().isNotFound());
     }
@@ -87,7 +87,7 @@ class AnswerControllerTest {
     @Test
     void testUpdateAnswer() {
         AnswerDto dto = answerDto();
-        when(answerService.updateAnswer(anyLong(), any())).thenReturn(dto);
+        when(questionService.updateAnswer(anyLong(), any())).thenReturn(dto);
         mockMvc.perform(put("/answer/update/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(dto))
@@ -100,7 +100,7 @@ class AnswerControllerTest {
     @Test
     void testVoteResponse() {
         AnswerDto dto = answerDto();
-        when(answerService.voteResponse(any())).thenReturn(dto);
+        when(questionService.voteResponse(any())).thenReturn(dto);
         mockMvc.perform(put("/answer/vote-response")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ class AnswerControllerTest {
     @SneakyThrows
     @Test
     void testFilterResponsesByDateFails() {
-        when(answerService.filterByDate(anyString())).thenReturn(new ArrayList<>());
+        when(questionService.filterByDate(anyString())).thenReturn(new ArrayList<>());
         mockMvc.perform(get("/answer/filter-by-date/{criteria}", "c")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -121,7 +121,7 @@ class AnswerControllerTest {
     @SneakyThrows
     @Test
     void testFilterResponsesByDateSuccess() {
-        when(answerService.filterByDate(anyString())).thenReturn(singletonList(answerDto()));
+        when(questionService.filterByDate(anyString())).thenReturn(singletonList(answerDto()));
         mockMvc.perform(get("/answer/filter-by-date/{criteria}", "week")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

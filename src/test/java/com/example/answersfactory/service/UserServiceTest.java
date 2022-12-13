@@ -1,6 +1,7 @@
 package com.example.answersfactory.service;
 
 import com.example.answersfactory.model.User;
+import com.example.answersfactory.model.dto.RegisterUserRequest;
 import com.example.answersfactory.model.dto.SuggestionDto;
 import com.example.answersfactory.model.dto.UserDto;
 import com.example.answersfactory.repository.UserRepository;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -16,13 +18,16 @@ import static com.example.answersfactory.model.SuggestionDtoMock.suggestionDto;
 import static com.example.answersfactory.model.UserMock.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserService userService;
@@ -48,12 +53,27 @@ public class UserServiceTest {
 
     @Test
     void insertUser(){
-        when(userRepository.save(any())).thenReturn(user());
-        assertNotNull(user().getId());
+        User user = user();
+        when(userRepository.save(any())).thenReturn(user);
+        userService.insertUser(user);
+        verify(userRepository).save(user);
     }
 
     @Test
     void registerUser(){
+
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("email@gmail.com");
+        request.setPassword("password");
+        request.setFirstName("Ion");
+        request.setLastName("Ion");
+        when(passwordEncoder.encode(anyString())).thenReturn("password");
+        when(userRepository.save(any())).thenReturn(user());
+        UserDto user = userService.registerUser(request);
+
+        assertEquals("firstName", user.getFirstName());
+
+
 
     }
 }

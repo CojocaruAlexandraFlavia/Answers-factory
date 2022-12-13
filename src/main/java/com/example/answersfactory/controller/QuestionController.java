@@ -74,15 +74,7 @@ public class QuestionController {
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    @PutMapping("/add-answer")
-    public ResponseEntity<QuestionDto> addAnswer(@RequestBody AddAnswerRequest addAnswerRequest){
-        QuestionDto result = questionService.addAnswer(addAnswerRequest.getQuestionId(), addAnswerRequest.getUserId(), addAnswerRequest.getMessage());
-        if(result == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(result, HttpStatus.OK);
 
-    }
     @GetMapping("{id}/answers-order-by/{option}/{type}")
     public ResponseEntity<QuestionDto> orderAnswers(@PathVariable("id") Long id, @PathVariable("option") String option, @PathVariable String type){
 

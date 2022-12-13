@@ -9,6 +9,7 @@ public class AnswerMock {
     public static @NotNull Answer answer() {
         Answer answer = new Answer();
         answer.setId(1L);
+        answer.setDate("10-10-2022 12:12:12");
         Question question = new Question();
         question.setId(1L);
         answer.setQuestion(question);
