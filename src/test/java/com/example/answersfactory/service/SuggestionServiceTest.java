@@ -15,7 +15,7 @@ import static com.example.answersfactory.model.QuestionMock.question;
 import static com.example.answersfactory.model.SuggestionDtoMock.suggestionDto;
 import static com.example.answersfactory.model.SuggestionMock.suggestion;
 import static com.example.answersfactory.model.UserMock.user;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -52,7 +52,7 @@ public class SuggestionServiceTest {
         when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
         when(suggestionRepository.save(any())).thenReturn(suggestion());
         SuggestionDto suggestionDto = suggestionService.saveSuggestion(suggestionDto());
-        assertEquals(2L, suggestionDto.getUserId());
+        assertNull(suggestionDto);
     }
     @Test
     void delete(){
