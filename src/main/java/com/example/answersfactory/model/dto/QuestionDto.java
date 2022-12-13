@@ -22,7 +22,7 @@ public class QuestionDto {
     private List<SuggestionDto> suggestions;
     private List<AnswerDto> answers;
 
-    public static @NotNull QuestionDto convertEntityToDto(@NotNull Question question){
+    public static QuestionDto convertEntityToDto(Question question){
         QuestionDto dto = new QuestionDto();
         dto.setStatus(question.getStatus().toString());
         dto.setMessage(question.getMessage());
