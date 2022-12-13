@@ -14,4 +14,8 @@ public class NotificationDto {
         this.questionId = questionId;
         this.status = status.toString();
     }
+
+    public NotificationDto() {
+
+    }
 }

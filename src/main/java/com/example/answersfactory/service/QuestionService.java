@@ -28,7 +28,6 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserService userService;
     private final TopicRepository topicRepository;
-    private final SuggestionRepository suggestionRepository;
     private final BadgeRepository badgeRepository;
     private final AnswerRepository answerRepository;
     private final NotificationRepository notificationRepository;
@@ -36,11 +35,10 @@ public class QuestionService {
     @Autowired
     public QuestionService(QuestionRepository questionRepository, UserService userService,
                            TopicRepository topicRepository,
-                           SuggestionRepository suggestionRepository, BadgeRepository badgeRepository, AnswerRepository answerRepository, NotificationRepository notificationRepository) {
+                           BadgeRepository badgeRepository, AnswerRepository answerRepository, NotificationRepository notificationRepository) {
         this.questionRepository = questionRepository;
         this.userService = userService;
         this.topicRepository = topicRepository;
-        this.suggestionRepository = suggestionRepository;
         this.badgeRepository = badgeRepository;
         this.answerRepository = answerRepository;
         this.notificationRepository = notificationRepository;
@@ -166,7 +164,6 @@ public class QuestionService {
                         return convertEntityToDto(questionRepository.save(question));
                     }
                 }
-
             }
         }
         return null;
@@ -213,7 +210,5 @@ public class QuestionService {
         }
         return null;
     }
-//    private Boolean checkIfUserQuestionRelationshipExists(Long userId, Long questionId){
-//
-//    }
+
 }

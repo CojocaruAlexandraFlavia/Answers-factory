@@ -1,18 +1,9 @@
 package com.example.answersfactory.service;
 
-import com.example.answersfactory.enums.TopicValue;
-import com.example.answersfactory.model.Answer;
+
 import com.example.answersfactory.model.Question;
-import com.example.answersfactory.model.Topic;
-import com.example.answersfactory.model.User;
-import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.QuestionDto;
-import com.example.answersfactory.repository.AnswerRepository;
-import com.example.answersfactory.repository.BadgeRepository;
-import com.example.answersfactory.repository.QuestionRepository;
-import com.example.answersfactory.repository.TopicRepository;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
+import com.example.answersfactory.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,14 +13,13 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.answersfactory.model.AnswerDtoMock.answerDto;
 import static com.example.answersfactory.model.AnswerMock.answer;
+import static com.example.answersfactory.model.NotificationMock.notification;
 import static com.example.answersfactory.model.QuestionDtoMock.questionDto;
 import static com.example.answersfactory.model.QuestionMock.question;
 import static com.example.answersfactory.model.TopicMock.topic;
 import static com.example.answersfactory.model.UserMock.user;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -50,6 +40,9 @@ public class QuestionServiceTest {
     @Mock
     private AnswerRepository answerRepository;
 
+    @Mock
+    private NotificationRepository notificationRepository;
+
     @InjectMocks
     private QuestionService questionService;
 
@@ -66,16 +59,6 @@ public class QuestionServiceTest {
         assertEquals(1, result.get().getId());
     }
 
-
-//    @Test
-//    void findAll(){
-//
-//        questionRepository.save(question());
-//        List<Question> result = questionService.findAll();
-//        assertTrue(result.contains(question()));
-//
-//    }
-
     @Test
     void saveQuestion(){
 
@@ -85,5 +68,67 @@ public class QuestionServiceTest {
         QuestionDto result = questionService.saveQuestion(questionDto());
         assertEquals(1L, result.getUserId());
     }
+
+    @Test
+    void updateQuestion(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        when(questionRepository.save(any())).thenReturn(question());
+        assertNotNull(questionService.updateQuestion(question().getId(), questionDto()));
+    }
+
+
+    @Test
+    void deleteQuestion(){
+
+    }
+    @Test
+    void deleteTopic(){
+
+    }
+
+
+    @Test
+    void addAnswer(){
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(answerRepository.save(any())).thenReturn(answer());
+        when(questionRepository.save(any())).thenReturn(question());
+        assertNotNull(questionService.saveQuestion(questionDto()));
+
+    }
+
+    @Test
+    void markAcceptedAnswer(){
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(answerRepository.findById(anyLong())).thenReturn(Optional.of(answer()));
+        when(answerRepository.save(any())).thenReturn(answer());
+        when(notificationRepository.save(any())).thenReturn(notification());
+        when((questionRepository.save(any()))).thenReturn(question());
+        assertNotNull(questionRepository.save(question()));
+    }
+
+    @Test
+    void closeQuestion(){
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(questionRepository.save(any())).thenReturn(question());
+        assertNotNull(questionService.saveQuestion(questionDto()));
+    }
+
+    @Test
+    void seeNotification(){
+        when(notificationRepository.findById(anyLong())).thenReturn(Optional.of(notification()));
+        when(notificationRepository.save(any())).thenReturn(notification());
+        assertNotNull(notificationRepository.save(notification()));
+    }
+
+    @Test
+    void sortByOption(){
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question()));
+        when(questionRepository.save(any())).thenReturn(question());
+        assertNotNull(questionRepository.save(question()));
+    }
+
 
 }
