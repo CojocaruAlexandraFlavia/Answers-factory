@@ -63,7 +63,7 @@ class QuestionControllerTest {
     @SneakyThrows
     @Test
     void testFindQuestionByIdOK() {
-        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        when(questionService.findQuestionByIdDto(anyLong())).thenReturn(questionDto());
         mockMvc.perform(get("/question/get-by-id/{id}", 1L)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -73,7 +73,7 @@ class QuestionControllerTest {
     @SneakyThrows
     @Test
     void testFindQuestionByIdNotOK() {
-        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.empty());
+        when(questionService.findQuestionByIdDto(anyLong())).thenReturn(null);
         mockMvc.perform(get("/question/get-by-id/{id}", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

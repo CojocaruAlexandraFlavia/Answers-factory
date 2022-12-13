@@ -39,10 +39,9 @@ public class QuestionController {
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<QuestionDto> findQuestionById(@PathVariable("id") Long id){
-        Optional<Question> optionalQuestion = questionService.findQuestionById(id);
-        if(optionalQuestion.isPresent()){
-            QuestionDto questionDto = convertEntityToDto(optionalQuestion.get());
-            return new ResponseEntity<>(questionDto, HttpStatus.OK);
+        QuestionDto result = questionService.findQuestionByIdDto(id);
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

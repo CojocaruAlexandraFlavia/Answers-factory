@@ -46,9 +46,14 @@ public class QuestionService {
         this.notificationRepository = notificationRepository;
     }
 
-    @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
+    //@Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public Optional<Question> findQuestionById(Long id) {
         return questionRepository.findById(id);
+    }
+
+    public QuestionDto findQuestionByIdDto(Long id) {
+        Optional<Question> optionalQuestion = findQuestionById(id);
+        return optionalQuestion.map(QuestionDto::convertEntityToDto).orElse(null);
     }
 
     public List<Question> findAll(){
