@@ -29,7 +29,7 @@ Answers Factory is a platform based on posting questions and answers on various 
 7. As an admin, I would like to be able to delete any question or answer so that I can minimize improper activity;
 
 ## Technologies 
-Java, Springboot, Maven, Mysql, Postman, Junit, SonarQube, Mockito
+
 * [Java](https://www.java.com/en/)
 * [Springboot](https://spring.io/projects/spring-boot)
 * [Maven](https://mvnrepository.com/)
