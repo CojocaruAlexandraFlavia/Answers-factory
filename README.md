@@ -1,5 +1,7 @@
 # Answers-factory
 
+Answers Factory is a platform based on posting questions and answers on various topics. Users have the option to vote the answers that seem the most appropiate for the topic, to suggest edits and changes to the original post and choose the correct answer. This app has an awarding system with badges for users with good activity.
+
 ## User Stories - implemented 
 1. As a user, I would like to be able to create a profile on the platform so that I can use it;
 2. As a user, I would like to post question and give answers so that I can receive and give advice;
@@ -25,3 +27,21 @@
 5. As a user, I would like to be able to attach files to my questions and answers so that I can describe the idea better;
 6. As an admin, I would like to be able to ban a user so that I can penalize improper activity;
 7. As an admin, I would like to be able to delete any question or answer so that I can minimize improper activity;
+
+## Technologies 
+Java, Springboot, Maven, Mysql, Postman, Junit, SonarQube, Mockito
+* [Java](https://www.java.com/en/)
+* [Springboot](https://spring.io/projects/spring-boot)
+* [Maven](https://mvnrepository.com/)
+* [Mysql](https://www.mysql.com/)
+* [Postman](https://www.postman.com/)
+* [Junit](https://junit.org/junit5/)
+* [SonarQube](https://www.sonarqube.org/)
+* [Mockito](https://site.mockito.org/)
+
+## Roles 
+
+* [Alexandra Buruiana](https://github.com/alexandraburu23) - Product Owner
+* [Andreea Gavrila](https://github.com/AndreeaGavrila) - Scrum Master
+* [Alexandra-Flavia Cojocaru](https://github.com/CojocaruAlexandraFlavia) - Developer
+* [Maria Florea](https://github.com/FloreaMaria) - Developer
