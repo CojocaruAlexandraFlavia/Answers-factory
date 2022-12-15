@@ -15,6 +15,8 @@
 	<description>answers-factory</description>
 	<properties>
 		<java.version>11</java.version>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.exclusions>**/model/*, **/model/dto/*, **/AnswersFactoryApplication.java, **/util/*</sonar.coverage.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -51,6 +53,18 @@
 			<version>0.11.5</version>
 		</dependency>
 		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<version>2.7.5</version>
@@ -71,6 +85,13 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>5.7.4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>4.9.0</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -87,6 +108,14 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>com/example/answersfactory/model/*</exclude>
+						<exclude>com/example/answersfactory/model/dto/*</exclude>
+						<exclude>com/example/answersfactory/AnswersFactoryApplication.java</exclude>
+						<exclude>com/example/answersfactory/util/*</exclude>
+					</excludes>
+				</configuration>
 				<version>0.8.3</version>
 				<executions>
 					<execution>

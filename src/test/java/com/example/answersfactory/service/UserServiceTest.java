@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class UserServiceTest {
+class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
@@ -72,8 +72,11 @@ public class UserServiceTest {
         UserDto user = userService.registerUser(request);
 
         assertEquals("firstName", user.getFirstName());
+    }
 
-
-
+    @Test
+    void testLoadByUsernameOK() {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user()));
+        assertNotNull(userService.loadUserByUsername("email@email.com"));
     }
 }

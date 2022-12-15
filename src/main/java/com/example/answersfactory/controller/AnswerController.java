@@ -77,4 +77,13 @@ public class AnswerController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/get-all-answers-for-question/{questionId}")
+    public ResponseEntity<List<AnswerDto>> getAllAnswersForQuestion(@PathVariable("questionId") Long questionId) {
+        List<AnswerDto> result = questionService.getAllAnswersForQuestion(questionId);
+        if(result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }
