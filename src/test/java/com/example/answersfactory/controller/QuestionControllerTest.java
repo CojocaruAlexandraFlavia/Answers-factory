@@ -97,7 +97,7 @@ class QuestionControllerTest {
 
     @SneakyThrows
     @Test
-    void testUpdateQuestion() {
+    void testUpdateQuestionOK() {
         QuestionDto dto = questionDto();
         when(questionService.updateQuestion(anyLong(), any())).thenReturn(dto);
         mockMvc.perform(put("/question/update/{id}", 1L)
@@ -110,12 +110,31 @@ class QuestionControllerTest {
 
     @SneakyThrows
     @Test
-    void testSeeNotification() {
+    void testUpdateQuestionNotOK() {
+        when(questionService.updateQuestion(anyLong(), any())).thenReturn(null);
+        mockMvc.perform(put("/question/update/{id}", 1L)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(questionDto())))
+                .andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void testSeeNotificationOK() {
         NotificationDto dto = new NotificationDto("type", 1L, NotificationStatus.UNSEEN);
         when(questionService.seeNotification(anyLong())).thenReturn(dto);
         mockMvc.perform(patch("/question/see-notification/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.questionId").value(1L));
+    }
+
+    @SneakyThrows
+    @Test
+    void testSeeNotificationNotOK() {
+        when(questionService.seeNotification(anyLong())).thenReturn(null);
+        mockMvc.perform(patch("/question/see-notification/{id}", 1L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -161,7 +180,7 @@ class QuestionControllerTest {
 
     @Test
     @SneakyThrows
-    void testMarkAcceptedAnswer() {
+    void testMarkAcceptedAnswerOK() {
         MarkAnswerRequest request = new MarkAnswerRequest();
         request.setAnswerId(1L);
         request.setQuestionId(1L);
@@ -177,7 +196,18 @@ class QuestionControllerTest {
 
     @Test
     @SneakyThrows
-    void testCloseQuestion() {
+    void testMarkAcceptedAnswerNotOK() {
+        when(questionService.markAcceptedAnswer(anyLong(), anyLong(), anyLong())).thenReturn(null);
+        mockMvc.perform(put("/question/mark-accepted-answer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(new MarkAnswerRequest())))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
+    void testCloseQuestionOK() {
         CloseQuestion request = new CloseQuestion();
         request.setQuestionId(1L);
         request.setUserId(1L);
@@ -188,6 +218,17 @@ class QuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.topic").value("food"));
+    }
+
+    @Test
+    @SneakyThrows
+    void testCloseQuestionNotOK() {
+        when(questionService.closeQuestion(anyLong(), anyLong())).thenReturn(null);
+        mockMvc.perform(put("/question/close-question")
+                        .content(asJsonString(new CloseQuestion()))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     private static String asJsonString(final Object obj) {

@@ -46,11 +46,12 @@ public class QuestionService {
         this.notificationRepository = notificationRepository;
     }
 
-    //@Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
+    @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public Optional<Question> findQuestionById(Long id) {
         return questionRepository.findById(id);
     }
 
+    @Transactional
     public QuestionDto findQuestionByIdDto(Long id) {
         Optional<Question> optionalQuestion = findQuestionById(id);
         return optionalQuestion.map(QuestionDto::convertEntityToDto).orElse(null);
@@ -86,6 +87,7 @@ public class QuestionService {
         return null;
     }
 
+    @Transactional
     public QuestionDto updateQuestion(Long questionId, QuestionDto questionDto){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
         if(optionalQuestion.isPresent()){
@@ -96,6 +98,7 @@ public class QuestionService {
         return null;
     }
 
+    @Transactional
     public boolean deleteQuestion(Long questionId){
         if(questionId != null){
             Optional<Question> optionalQuestion = findQuestionById(questionId);
@@ -111,6 +114,7 @@ public class QuestionService {
         topicRepository.deleteById(topicId);
     }
 
+    @Transactional
     public QuestionDto markAcceptedAnswer(Long questionId, Long userId, Long answerId){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
         Optional<User> optionalUser = userService.findUserById(userId);
@@ -143,6 +147,8 @@ public class QuestionService {
         }
         return null;
     }
+
+    @Transactional
     public QuestionDto closeQuestion(Long questionId, Long userId){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
         Optional<User> optionalUser = userService.findUserById(userId);
@@ -172,6 +178,7 @@ public class QuestionService {
         return null;
     }
 
+    @Transactional
     public QuestionDto sortByOption(Long questionId, String option, String type){
         Optional<Question> optionalQuestion = findQuestionById(questionId);
         if(optionalQuestion.isPresent()){
@@ -205,6 +212,7 @@ public class QuestionService {
         return answerRepository.findById(id);
     }
 
+    @Transactional
     public AnswerDto saveAnswer(@NotNull AnswerDto answerDto){
         Answer answer = new Answer();
         Optional<Question> optionalQuestion = findQuestionById(answerDto.getQuestionId());
@@ -366,4 +374,10 @@ public class QuestionService {
         return answers.stream().map(AnswerDto::convertEntityToDto).collect(toList());
     }
 
+    @Transactional
+    public List<AnswerDto> getAllAnswersForQuestion(Long questionId) {
+        Optional<Question> optionalQuestion = findQuestionById(questionId);
+        return optionalQuestion.map(question -> question.getAnswers().stream()
+                .map(AnswerDto::convertEntityToDto).collect(toList())).orElseGet(ArrayList::new);
+    }
 }

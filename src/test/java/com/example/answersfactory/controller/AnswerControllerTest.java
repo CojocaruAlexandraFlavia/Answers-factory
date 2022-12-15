@@ -159,6 +159,25 @@ class AnswerControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)));
     }
 
+    @Test
+    @SneakyThrows
+    void testGetAllAnswersForQuestionOK() {
+        when(questionService.getAllAnswersForQuestion(anyLong())).thenReturn(singletonList(answerDto()));
+        mockMvc.perform(get("/answer/get-all-answers-for-question/{questionId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    @SneakyThrows
+    void testGetAllAnswersForQuestionNotOK() {
+        when(questionService.getAllAnswersForQuestion(anyLong())).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/answer/get-all-answers-for-question/{questionId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
     private static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
