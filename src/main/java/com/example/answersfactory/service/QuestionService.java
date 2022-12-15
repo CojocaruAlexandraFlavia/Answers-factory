@@ -178,8 +178,10 @@ public class QuestionService {
                     question.setAnswers(sortedAnswers);
                 }
                 if(option.equals("date")) {
+
                     Collections.sort(sortedAnswers);
                     question.setAnswers(sortedAnswers);
+
                 }
             }
             if(type.equals("desc")){
@@ -190,6 +192,7 @@ public class QuestionService {
                 if(option.equals("date")) {
                     Collections.sort(sortedAnswers, Collections.reverseOrder());
                     question.setAnswers(sortedAnswers);
+
                 }
             }
             return convertEntityToDto(questionRepository.save(question));

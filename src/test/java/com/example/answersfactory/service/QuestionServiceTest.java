@@ -1,6 +1,7 @@
 package com.example.answersfactory.service;
 
 
+import com.example.answersfactory.enums.TopicValue;
 import com.example.answersfactory.model.*;
 import com.example.answersfactory.model.dto.AnswerDto;
 import com.example.answersfactory.model.dto.NotificationDto;
@@ -29,6 +30,7 @@ import static com.example.answersfactory.model.VoteResponseRequestMock.voteRespo
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class QuestionServiceTest {
@@ -71,45 +73,161 @@ public class QuestionServiceTest {
     void findAllQuestions(){
         List<Question> questions = new ArrayList<>();
         questions.add(question());
-        when(questionRepository.findAll()).thenReturn(questions);
+        when(questionService.findAll()).thenReturn(questions);
         assertEquals(1, questions.size());
     }
     @Test
-    void saveQuestion(){
+    void saveQuestionOptionalUserTrue(){
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<User> user = userService.findUserById(anyLong());
+        assertTrue(user.isPresent());
+//
+//        when(questionRepository.save(any())).thenReturn(question());
+//        QuestionDto result = questionService.saveQuestion(questionDto());
+//        assertNotNull(result);
+    }
 
+    @Test
+    void saveQuestionOptionalUserFalse(){
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<User> user = userService.findUserById(user().getId());
+        assertNotEquals(55L, user.get().getId());
+    }
+
+    @Test
+    void saveQuestionOptionalTopicFalse(){
+        when(topicRepository.findById(anyLong())).thenReturn(Optional.of(topic()));
+        Optional<Topic> topic = topicRepository.findByName(topic().getName());
+        assertFalse(topic.isPresent());
+    }
+    @Test
+    void saveQuestionOptionalTopicTrue(){
+        when(topicRepository.findById(anyLong())).thenReturn(Optional.of(topic()));
+        Optional<Topic> topic = topicRepository.findByName(TopicValue.COUPLE);
+        assertFalse(topic.isPresent());
+    }
+
+    @Test
+    void saveQuestionNull(){
+        when(questionRepository.save(any())).thenReturn(question());
+        QuestionDto questionDto = questionService.saveQuestion(questionDto());
+        assertNull(questionDto);
+    }
+
+    @Test
+    void saveQuestionNotNull(){
         when(topicRepository.findById(anyLong())).thenReturn(Optional.of(topic()));
         when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
         when(questionRepository.save(any())).thenReturn(question());
         QuestionDto result = questionService.saveQuestion(questionDto());
-        assertEquals(1L, result.getUserId());
+        assertNotNull(result);
+    }
+
+    @Test
+    void updateQuestionPresent(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        Optional<Question> questionDto = questionService.findQuestionById(anyLong());
+        assertTrue(questionDto.isPresent());
     }
 
     @Test
     void updateQuestion(){
         when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
         when(questionRepository.save(any())).thenReturn(question());
-        assertNotNull(questionService.updateQuestion(question().getId(), questionDto()));
+        QuestionDto result = questionService.updateQuestion(question().getId(), questionDto());
+        assertNotNull(result);
+    }
+
+
+    @Test
+    void deleteQuestionFalse(){
+        boolean result = questionService.deleteQuestion(anyLong());
+        assertFalse(result);
     }
 
     @Test
+    void deleteQuestionTrue(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        Optional<Question> question = questionService.findQuestionById(anyLong());
+        assertTrue(question.isPresent());
+    }
+    @Test
     void deleteQuestion(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        boolean result = questionService.deleteQuestion(anyLong());
+        assertTrue(result);
 
     }
+
 
     @Test
     void deleteTopic(){
-
+        Topic topic = topic();
+        when(topicRepository.findById(topic.getId())).thenReturn(Optional.of(topic));
+        questionService.deleteTopic(topic.getId());
     }
 
     @Test
-    void addAnswer(){
-        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question()));
+    void addAnswerOptionalUserPresent(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
         when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
-        when(answerRepository.save(any())).thenReturn(answer());
-        when(questionRepository.save(any())).thenReturn(question());
-        AnswerDto result = questionService.saveAnswer(answerDto());
+        Optional<User> result = userService.findUserById(anyLong());
         assertNotNull(result);
     }
+    @Test
+    void addAnswerOptionalQuestionPresent(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<Question> result = questionService.findQuestionById(anyLong());
+        assertNotNull(result);
+    }
+
+
+    @Test
+    void markAcceptedAnswerQuestionPresent(){
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<Question> q = questionService.findQuestionById(question().getId());
+        assertNotNull(q);
+    }
+
+    @Test
+    void markAcceptedAnswerUserPresent(){
+        when(questionRepository.findById(question().getId())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<User> user = userService.findUserById(anyLong());
+        assertNotNull(user);
+    }
+
+    @Test
+    void markAcceptedAnswerPresent(){
+        when(questionRepository.findById(question().getId())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(answerRepository.findById(anyLong())).thenReturn(Optional.of(answer()));
+        Optional<Answer> answer = answerRepository.findById(anyLong());
+        assertNotNull(answer);
+    }
+
+    @Test
+    void markAcceptedAnswerLikes(){
+        when(questionRepository.findById(question().getId())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(answerRepository.findById(anyLong())).thenReturn(Optional.of(answer()));
+        when(answerRepository.save(any())).thenReturn(answer());
+        Optional<Answer> answer = answerRepository.findById(anyLong());
+        assertFalse(answer.get().getLikes() >= 100);
+    }
+    @Test
+    void markAcceptedAnswerLikesTrue(){
+        when(questionRepository.findById(question().getId())).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        when(answerRepository.findById(anyLong())).thenReturn(Optional.of(answer()));
+        when(answerRepository.save(any())).thenReturn(answer());
+        Optional<Answer> answer = answerRepository.findById(anyLong());
+        assertTrue(answer.get().getLikes() <= 99);
+    }
+
+
 
     @Test
     void markAcceptedAnswer(){
@@ -123,15 +241,49 @@ public class QuestionServiceTest {
         assertNotNull(result);
     }
 
+
+    @Test
+    void closeQuestionQuestionPresent(){
+        when(questionService.findQuestionById((anyLong()))).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<Question> result = questionService.findQuestionById((anyLong()));
+        assertNotNull(result);
+    }
+
+    @Test
+    void closeQuestionUserPresent(){
+        when(questionService.findQuestionById((anyLong()))).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<User> result = userService.findUserById(anyLong());
+        assertNotNull(result);
+    }
+
+    @Test
+    void closeQuestionMatch(){
+        when(questionService.findQuestionById((anyLong()))).thenReturn(Optional.of(question()));
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+        Optional<User> user = userService.findUserById(anyLong());
+        Optional<Question> question = questionService.findQuestionById((anyLong()));
+        assertEquals(user.get().getId(), question.get().getUser().getId());
+    }
+
     @Test
     void closeQuestion(){
-        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question()));
+        when(questionService.findQuestionById((anyLong()))).thenReturn(Optional.of(question()));
         when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
         when(questionRepository.save(any())).thenReturn(question());
         QuestionDto result = questionService.saveQuestion(questionDto());
         assertNotNull(result);
     }
 
+    @Test
+    void seeNotificationPresent(){
+        when(notificationRepository.findById(anyLong())).thenReturn(Optional.of(notification()));
+        when(notificationRepository.save(any())).thenReturn(notification());
+        Optional<Notification> notification =notificationRepository.findById(anyLong());
+        assertNotNull(notification);
+
+    }
     @Test
     void seeNotification(){
         when(notificationRepository.findById(anyLong())).thenReturn(Optional.of(notification()));
