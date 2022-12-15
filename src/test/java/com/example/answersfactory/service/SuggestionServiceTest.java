@@ -1,6 +1,7 @@
 package com.example.answersfactory.service;
 
 import com.example.answersfactory.model.Suggestion;
+import com.example.answersfactory.model.User;
 import com.example.answersfactory.model.dto.SuggestionDto;
 import com.example.answersfactory.repository.SuggestionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,18 +48,33 @@ class SuggestionServiceTest {
     }
 
     @Test
-    void saveSuggestion(){
-        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user()));
+    void saveSuggestionOK(){
+        User user = user();
+        user.setId(2L);
+        when(userService.findUserById(anyLong())).thenReturn(Optional.of(user));
         when(questionService.findQuestionById(anyLong())).thenReturn(Optional.of(question()));
         when(suggestionRepository.save(any())).thenReturn(suggestion());
         SuggestionDto suggestionDto = suggestionService.saveSuggestion(suggestionDto());
-        assertNull(suggestionDto);
+        assertNotNull(suggestionDto);
+    }
+
+    @Test
+    void saveSuggestionNotOk() {
+        when(userService.findUserById(anyLong())).thenReturn(Optional.empty());
+        when(questionService.findQuestionById(anyLong())).thenReturn(Optional.empty());
+        assertNull(suggestionService.saveSuggestion(suggestionDto()));
     }
     @Test
-    void delete(){
-
+    void deleteTrue(){
+        when(suggestionRepository.findById(anyLong())).thenReturn(Optional.of(suggestion()));
+        assertTrue(suggestionService.deleteSuggestion(1L));
     }
 
+    @Test
+    void deleteFalse(){
+        when(suggestionRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertFalse(suggestionService.deleteSuggestion(1L));
+    }
 
 }
 
